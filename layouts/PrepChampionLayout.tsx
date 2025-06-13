@@ -1,3 +1,5 @@
+"use client";
+//
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,12 +17,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTheme } from '@/components/theme-provider';
 import {
-  Stethoscope,
+  Heart,
   Users,
+  BookOpen,
+  MessageCircle,
+  TrendingUp,
   Calendar,
-  Video,
-  UserCheck,
-  FileText,
   Bell,
   Menu,
   LogOut,
@@ -28,86 +30,80 @@ import {
   Building2,
   Moon,
   Sun,
+  UserCheck,
   Clock,
-  CheckSquare,
-  AlertCircle,
-  Activity,
-  MessageSquare,
-  Pill,
-  Upload
+  Target,
+  Award,
+  Phone,
+  Video,
+  FileText
 } from 'lucide-react';
 
-interface DoctorLayoutProps {
+interface PrepChampionLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DoctorLayout({ children }: DoctorLayoutProps) {
+export default function PrepChampionLayout({ children }: PrepChampionLayoutProps) {
   const { userData, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-  const [notifications] = useState(6); // Mock notification count
+  const [notifications] = useState(4); // Mock notification count
 
   const navigationItems = [
     {
-      href: '/doctor',
-      icon: <Stethoscope className="h-5 w-5" />,
+      href: '/prep-champion',
+      icon: <Heart className="h-5 w-5" />,
       label: 'Dashboard',
-      description: 'Medical overview'
+      description: 'Support overview'
     },
     {
-      href: '/doctor/patients',
+      href: '/prep-champion/patients',
       icon: <Users className="h-5 w-5" />,
       label: 'My Patients',
-      description: 'Patient management'
+      description: 'Supported patients'
     },
     {
-      href: '/doctor/appointments',
-      icon: <Calendar className="h-5 w-5" />,
-      label: 'Appointments',
-      description: 'Schedule & consultations'
+      href: '/prep-champion/education',
+      icon: <BookOpen className="h-5 w-5" />,
+      label: 'Education',
+      description: 'Materials & resources'
     },
     {
-      href: '/doctor/consultations',
-      icon: <Video className="h-5 w-5" />,
-      label: 'Consultations',
-      description: 'Video calls & meetings'
+      href: '/prep-champion/support',
+      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Support Sessions',
+      description: 'Counseling & guidance'
     },
     {
-      href: '/doctor/approvals',
-      icon: <UserCheck className="h-5 w-5" />,
-      label: 'Patient Approvals',
-      description: 'New patient requests'
-    },
-    {
-      href: '/doctor/reports',
-      icon: <FileText className="h-5 w-5" />,
-      label: 'Medical Reports',
-      description: 'Patient records & reports'
+      href: '/prep-champion/tracking',
+      icon: <TrendingUp className="h-5 w-5" />,
+      label: 'Progress Tracking',
+      description: 'Patient outcomes'
     }
   ];
 
   const quickActions = [
     {
-      label: 'Next Appointment',
-      icon: <Clock className="h-4 w-4" />,
-      action: () => navigate('/doctor/appointments?view=next'),
-      badge: '2:30 PM',
-      description: 'John Doe - PrEP Consultation'
-    },
-    {
-      label: 'Pending Approvals',
-      icon: <UserCheck className="h-4 w-4" />,
-      action: () => navigate('/doctor/approvals?filter=pending'),
+      label: 'Scheduled Sessions',
+      icon: <Calendar className="h-4 w-4" />,
+      action: () => navigate('/prep-champion/support?view=scheduled'),
       badge: '3',
-      description: 'New patient requests'
+      description: 'Today\'s support sessions'
     },
     {
-      label: 'Video Uploads Review',
-      icon: <Upload className="h-4 w-4" />,
-      action: () => navigate('/doctor/patients?filter=video-uploads'),
-      badge: '7',
-      description: 'Patient video submissions'
+      label: 'Follow-up Calls',
+      icon: <Phone className="h-4 w-4" />,
+      action: () => navigate('/prep-champion/patients?action=follow-up'),
+      badge: '5',
+      description: 'Patients needing follow-up'
+    },
+    {
+      label: 'New Resources',
+      icon: <BookOpen className="h-4 w-4" />,
+      action: () => navigate('/prep-champion/education?filter=new'),
+      badge: '2',
+      description: 'Latest educational materials'
     }
   ];
 
@@ -121,39 +117,47 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
   };
 
   const isActiveRoute = (href: string) => {
-    if (href === '/doctor') {
-      return location.pathname === '/doctor';
+    if (href === '/prep-champion') {
+      return location.pathname === '/prep-champion';
     }
     return location.pathname.startsWith(href);
   };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Doctor Profile */}
+      {/* Champion Profile */}
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-3">
-          <div className="bg-gradient-to-r from-blue-600 to-green-600 p-2 rounded-lg">
-            <Stethoscope className="h-6 w-6 text-white" />
+          <div className="bg-gradient-to-r from-pink-600 to-purple-600 p-2 rounded-lg">
+            <Heart className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h2 className="text-lg font-bold">Dr. {userData?.displayName}</h2>
-            <Badge variant="secondary" className="text-xs">
-              {userData?.specialization || 'General Practice'}
-            </Badge>
+            <h2 className="text-lg font-bold">{userData?.displayName}</h2>
+            <Badge variant="secondary" className="text-xs">PrEP Champion</Badge>
           </div>
         </div>
         
         {/* Hospital Info */}
-        <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+        <div className="mt-4 p-3 bg-pink-50 dark:bg-pink-950 rounded-lg border border-pink-200 dark:border-pink-800">
           <div className="flex items-center space-x-2">
-            <Building2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+            <Building2 className="h-4 w-4 text-pink-600 dark:text-pink-400" />
+            <span className="text-sm font-medium text-pink-700 dark:text-pink-300">
               {userData?.hospitalName || 'Hospital'}
             </span>
           </div>
-          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-            {userData?.department || 'HIV Prevention Unit'}
+          <p className="text-xs text-pink-600 dark:text-pink-400 mt-1">
+            {userData?.department || 'Community Support Team'}
           </p>
+        </div>
+
+        {/* Achievement Badge */}
+        <div className="mt-3 p-2 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950 dark:to-orange-950 rounded-lg border border-yellow-200 dark:border-yellow-800">
+          <div className="flex items-center space-x-2">
+            <Award className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+            <span className="text-xs font-medium text-yellow-700 dark:text-yellow-300">
+              Top Supporter This Month
+            </span>
+          </div>
         </div>
       </div>
 
@@ -161,7 +165,7 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
       <nav className="flex-1 p-4 space-y-2">
         <div className="mb-6">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            Medical Practice
+            Patient Support
           </p>
           <div className="space-y-1">
             {navigationItems.map((item) => (
@@ -170,11 +174,11 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
                 to={item.href}
                 className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 group ${
                   isActiveRoute(item.href)
-                    ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+                    ? 'bg-pink-50 dark:bg-pink-950 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-800'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
               >
-                <div className={`${isActiveRoute(item.href) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`}>
+                <div className={`${isActiveRoute(item.href) ? 'text-pink-600 dark:text-pink-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`}>
                   {item.icon}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -189,7 +193,7 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
         {/* Quick Actions */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            Quick Actions
+            Today's Priorities
           </p>
           <div className="space-y-2">
             {quickActions.map((action, index) => (
@@ -217,27 +221,27 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
           </div>
         </div>
 
-        {/* Today's Schedule */}
+        {/* Support Stats */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            Today's Schedule
+            My Impact
           </p>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Total Patients</span>
-              <span className="font-medium">24</span>
+              <span className="text-gray-600 dark:text-gray-400">Active Patients</span>
+              <span className="font-medium text-pink-600">18</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Appointments</span>
-              <span className="font-medium text-blue-600">8/10</span>
+              <span className="text-gray-600 dark:text-gray-400">Sessions This Week</span>
+              <span className="font-medium text-purple-600">12</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Consultations</span>
-              <span className="font-medium text-green-600">3</span>
+              <span className="text-gray-600 dark:text-gray-400">Success Rate</span>
+              <span className="font-medium text-green-600">94%</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Pending Tasks</span>
-              <span className="font-medium text-orange-600">2</span>
+              <span className="text-gray-600 dark:text-gray-400">Monthly Rank</span>
+              <span className="font-medium text-yellow-600">#1</span>
             </div>
           </div>
         </div>
@@ -248,12 +252,12 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10">
             <AvatarImage src="/api/placeholder/40/40" />
-            <AvatarFallback className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
-              {userData?.displayName?.substring(0, 2).toUpperCase() || 'DR'}
+            <AvatarFallback className="bg-gradient-to-r from-pink-600 to-purple-600 text-white">
+              {userData?.displayName?.substring(0, 2).toUpperCase() || 'PC'}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm truncate">Dr. {userData?.displayName}</p>
+            <p className="font-medium text-sm truncate">{userData?.displayName}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{userData?.email}</p>
           </div>
         </div>
@@ -288,10 +292,10 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
             {/* Page Title */}
             <div>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Medical Practice
+                Community Support
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                PrEP/PEP Prevention Care Management
+                Empowering patients on their PrEP/PEP journey
               </p>
             </div>
           </div>
@@ -301,12 +305,12 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
             {/* Quick Stats */}
             <div className="hidden md:flex items-center space-x-4 text-sm">
               <div className="flex items-center space-x-2">
-                <CheckSquare className="h-4 w-4 text-green-500" />
-                <span className="text-gray-600 dark:text-gray-400">8 Appointments</span>
+                <Target className="h-4 w-4 text-pink-500" />
+                <span className="text-gray-600 dark:text-gray-400">18 Active</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4 text-blue-500" />
-                <span className="text-gray-600 dark:text-gray-400">Next: 2:30 PM</span>
+                <Clock className="h-4 w-4 text-purple-500" />
+                <span className="text-gray-600 dark:text-gray-400">3 Sessions</span>
               </div>
             </div>
 
@@ -335,8 +339,8 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src="/api/placeholder/40/40" />
-                    <AvatarFallback className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
-                      {userData?.displayName?.substring(0, 2).toUpperCase() || 'DR'}
+                    <AvatarFallback className="bg-gradient-to-r from-pink-600 to-purple-600 text-white">
+                      {userData?.displayName?.substring(0, 2).toUpperCase() || 'PC'}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -344,23 +348,27 @@ export default function DoctorLayout({ children }: DoctorLayoutProps) {
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">Dr. {userData?.displayName}</p>
+                    <p className="text-sm font-medium leading-none">{userData?.displayName}</p>
                     <p className="text-xs leading-none text-muted-foreground">{userData?.email}</p>
-                    <Badge variant="secondary" className="w-fit">Doctor</Badge>
+                    <Badge variant="secondary" className="w-fit">PrEP Champion</Badge>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/doctor/profile')}>
+                <DropdownMenuItem onClick={() => navigate('/prep-champion/profile')}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/doctor/patients')}>
+                <DropdownMenuItem onClick={() => navigate('/prep-champion/patients')}>
                   <Users className="mr-2 h-4 w-4" />
                   <span>My Patients</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/doctor/appointments')}>
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span>Schedule</span>
+                <DropdownMenuItem onClick={() => navigate('/prep-champion/support')}>
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  <span>Support Sessions</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/prep-champion/tracking')}>
+                  <TrendingUp className="mr-2 h-4 w-4" />
+                  <span>Progress Reports</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400">

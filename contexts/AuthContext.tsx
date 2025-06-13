@@ -1,3 +1,4 @@
+"use client"
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { 
   User,
@@ -17,7 +18,7 @@ import {
   getDocs 
 } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 export interface UserData {
   uid: string;
@@ -67,7 +68,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+
 
   // Fetch user data from Firestore
   const fetchUserData = async (uid: string): Promise<UserData | null> => {

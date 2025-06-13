@@ -1,3 +1,5 @@
+"use client";
+//
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,13 +17,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTheme } from '@/components/theme-provider';
 import {
-  LayoutDashboard,
+  Stethoscope,
   Users,
-  UserCheck,
   Calendar,
-  BarChart3,
-  MessageSquareText,
-  Settings,
+  Video,
+  UserCheck,
+  FileText,
   Bell,
   Menu,
   LogOut,
@@ -29,87 +30,86 @@ import {
   Building2,
   Moon,
   Sun,
-  UserPlus,
   Clock,
-  CheckCircle,
+  CheckSquare,
   AlertCircle,
-  Activity
+  Activity,
+  MessageSquare,
+  Pill,
+  Upload
 } from 'lucide-react';
 
-interface AdminLayoutProps {
+interface DoctorLayoutProps {
   children: React.ReactNode;
 }
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+export default function DoctorLayout({ children }: DoctorLayoutProps) {
   const { userData, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-  const [notifications] = useState(8); // Mock notification count
+  const [notifications] = useState(6); // Mock notification count
 
   const navigationItems = [
     {
-      href: '/admin',
-      icon: <LayoutDashboard className="h-5 w-5" />,
+      href: '/doctor',
+      icon: <Stethoscope className="h-5 w-5" />,
       label: 'Dashboard',
-      description: 'Hospital overview'
+      description: 'Medical overview'
     },
     {
-      href: '/admin/staff',
+      href: '/doctor/patients',
       icon: <Users className="h-5 w-5" />,
-      label: 'Staff Management',
-      description: 'Doctors & PrEP champions'
-    },
-    {
-      href: '/admin/patients',
-      icon: <UserCheck className="h-5 w-5" />,
-      label: 'Patients',
+      label: 'My Patients',
       description: 'Patient management'
     },
     {
-      href: '/admin/appointments',
+      href: '/doctor/appointments',
       icon: <Calendar className="h-5 w-5" />,
       label: 'Appointments',
-      description: 'Schedule management'
+      description: 'Schedule & consultations'
     },
     {
-      href: '/admin/requests',
-      icon: <MessageSquareText className="h-5 w-5" />,
-      label: 'Requests',
-      description: 'Patient requests & approvals'
+      href: '/doctor/consultations',
+      icon: <Video className="h-5 w-5" />,
+      label: 'Consultations',
+      description: 'Video calls & meetings'
     },
     {
-      href: '/admin/analytics',
-      icon: <BarChart3 className="h-5 w-5" />,
-      label: 'Analytics',
-      description: 'Hospital insights'
+      href: '/doctor/approvals',
+      icon: <UserCheck className="h-5 w-5" />,
+      label: 'Patient Approvals',
+      description: 'New patient requests'
     },
     {
-      href: '/admin/settings',
-      icon: <Settings className="h-5 w-5" />,
-      label: 'Settings',
-      description: 'Hospital configuration'
+      href: '/doctor/reports',
+      icon: <FileText className="h-5 w-5" />,
+      label: 'Medical Reports',
+      description: 'Patient records & reports'
     }
   ];
 
   const quickActions = [
     {
-      label: 'Add Doctor',
-      icon: <UserPlus className="h-4 w-4" />,
-      action: () => navigate('/admin/staff?action=add-doctor'),
-      badge: null
+      label: 'Next Appointment',
+      icon: <Clock className="h-4 w-4" />,
+      action: () => navigate('/doctor/appointments?view=next'),
+      badge: '2:30 PM',
+      description: 'John Doe - PrEP Consultation'
     },
     {
       label: 'Pending Approvals',
-      icon: <Clock className="h-4 w-4" />,
-      action: () => navigate('/admin/requests?filter=pending'),
-      badge: '5'
+      icon: <UserCheck className="h-4 w-4" />,
+      action: () => navigate('/doctor/approvals?filter=pending'),
+      badge: '3',
+      description: 'New patient requests'
     },
     {
-      label: 'Today\'s Appointments',
-      icon: <Calendar className="h-4 w-4" />,
-      action: () => navigate('/admin/appointments?date=today'),
-      badge: '12'
+      label: 'Video Uploads Review',
+      icon: <Upload className="h-4 w-4" />,
+      action: () => navigate('/doctor/patients?filter=video-uploads'),
+      badge: '7',
+      description: 'Patient video submissions'
     }
   ];
 
@@ -123,34 +123,38 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   const isActiveRoute = (href: string) => {
-    if (href === '/admin') {
-      return location.pathname === '/admin';
+    if (href === '/doctor') {
+      return location.pathname === '/doctor';
     }
     return location.pathname.startsWith(href);
   };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Logo and Hospital Info */}
+      {/* Doctor Profile */}
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-3">
-          <div className="bg-gradient-to-r from-green-600 to-blue-600 p-2 rounded-lg">
-            <Building2 className="h-6 w-6 text-white" />
+          <div className="bg-gradient-to-r from-blue-600 to-green-600 p-2 rounded-lg">
+            <Stethoscope className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h2 className="text-lg font-bold">{userData?.hospitalName || 'Hospital'}</h2>
-            <Badge variant="secondary" className="text-xs">Administrator</Badge>
+            <h2 className="text-lg font-bold">Dr. {userData?.displayName}</h2>
+            <Badge variant="secondary" className="text-xs">
+              {userData?.specialization || 'General Practice'}
+            </Badge>
           </div>
         </div>
         
-        {/* Hospital Status */}
-        <div className="mt-4 p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+        {/* Hospital Info */}
+        <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
           <div className="flex items-center space-x-2">
-            <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-            <span className="text-xs font-medium text-green-700 dark:text-green-300">Hospital Active</span>
+            <Building2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+              {userData?.hospitalName || 'Hospital'}
+            </span>
           </div>
-          <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-            All systems operational
+          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+            {userData?.department || 'HIV Prevention Unit'}
           </p>
         </div>
       </div>
@@ -159,7 +163,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <nav className="flex-1 p-4 space-y-2">
         <div className="mb-6">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            Hospital Management
+            Medical Practice
           </p>
           <div className="space-y-1">
             {navigationItems.map((item) => (
@@ -168,11 +172,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 to={item.href}
                 className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 group ${
                   isActiveRoute(item.href)
-                    ? 'bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800'
+                    ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
               >
-                <div className={`${isActiveRoute(item.href) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`}>
+                <div className={`${isActiveRoute(item.href) ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`}>
                   {item.icon}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -189,44 +193,53 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
             Quick Actions
           </p>
-          <div className="space-y-1">
+          <div className="space-y-2">
             {quickActions.map((action, index) => (
               <button
                 key={index}
                 onClick={action.action}
-                className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="w-full flex items-start space-x-3 px-3 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-left"
               >
-                <div className="flex items-center space-x-3">
-                  {action.icon}
-                  <span>{action.label}</span>
+                <div className="mt-0.5">{action.icon}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{action.label}</span>
+                    {action.badge && (
+                      <Badge variant="secondary" className="ml-2">
+                        {action.badge}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {action.description}
+                  </p>
                 </div>
-                {action.badge && (
-                  <Badge variant="secondary" className="ml-auto">
-                    {action.badge}
-                  </Badge>
-                )}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Hospital Stats */}
+        {/* Today's Schedule */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            Today's Overview
+            Today's Schedule
           </p>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Active Patients</span>
-              <span className="font-medium">147</span>
+              <span className="text-gray-600 dark:text-gray-400">Total Patients</span>
+              <span className="font-medium">24</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Staff Online</span>
-              <span className="font-medium text-green-600">8/12</span>
+              <span className="text-gray-600 dark:text-gray-400">Appointments</span>
+              <span className="font-medium text-blue-600">8/10</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600 dark:text-gray-400">Consultations</span>
+              <span className="font-medium text-green-600">3</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600 dark:text-gray-400">Pending Tasks</span>
-              <span className="font-medium text-orange-600">5</span>
+              <span className="font-medium text-orange-600">2</span>
             </div>
           </div>
         </div>
@@ -237,12 +250,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10">
             <AvatarImage src="/api/placeholder/40/40" />
-            <AvatarFallback className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
-              {userData?.displayName?.substring(0, 2).toUpperCase() || 'AD'}
+            <AvatarFallback className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
+              {userData?.displayName?.substring(0, 2).toUpperCase() || 'DR'}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm truncate">{userData?.displayName}</p>
+            <p className="font-medium text-sm truncate">Dr. {userData?.displayName}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{userData?.email}</p>
           </div>
         </div>
@@ -277,10 +290,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {/* Page Title */}
             <div>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Hospital Administration
+                Medical Practice
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {userData?.hospitalName || 'Manage your hospital operations'}
+                PrEP/PEP Prevention Care Management
               </p>
             </div>
           </div>
@@ -290,12 +303,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {/* Quick Stats */}
             <div className="hidden md:flex items-center space-x-4 text-sm">
               <div className="flex items-center space-x-2">
-                <CheckCircle className="h-4 w-4 text-green-500" />
-                <span className="text-gray-600 dark:text-gray-400">12 Appointments</span>
+                <CheckSquare className="h-4 w-4 text-green-500" />
+                <span className="text-gray-600 dark:text-gray-400">8 Appointments</span>
               </div>
               <div className="flex items-center space-x-2">
-                <AlertCircle className="h-4 w-4 text-orange-500" />
-                <span className="text-gray-600 dark:text-gray-400">5 Pending</span>
+                <Clock className="h-4 w-4 text-blue-500" />
+                <span className="text-gray-600 dark:text-gray-400">Next: 2:30 PM</span>
               </div>
             </div>
 
@@ -324,8 +337,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src="/api/placeholder/40/40" />
-                    <AvatarFallback className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
-                      {userData?.displayName?.substring(0, 2).toUpperCase() || 'AD'}
+                    <AvatarFallback className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
+                      {userData?.displayName?.substring(0, 2).toUpperCase() || 'DR'}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -333,23 +346,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{userData?.displayName}</p>
+                    <p className="text-sm font-medium leading-none">Dr. {userData?.displayName}</p>
                     <p className="text-xs leading-none text-muted-foreground">{userData?.email}</p>
-                    <Badge variant="secondary" className="w-fit">Administrator</Badge>
+                    <Badge variant="secondary" className="w-fit">Doctor</Badge>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/admin/profile')}>
+                <DropdownMenuItem onClick={() => navigate('/doctor/profile')}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Hospital Settings</span>
+                <DropdownMenuItem onClick={() => navigate('/doctor/patients')}>
+                  <Users className="mr-2 h-4 w-4" />
+                  <span>My Patients</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/admin/analytics')}>
-                  <Activity className="mr-2 h-4 w-4" />
-                  <span>View Analytics</span>
+                <DropdownMenuItem onClick={() => navigate('/doctor/appointments')}>
+                  <Calendar className="mr-2 h-4 w-4" />
+                  <span>Schedule</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400">

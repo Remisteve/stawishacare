@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,12 +16,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTheme } from '@/components/theme-provider';
 import {
-  Heart,
+  LayoutDashboard,
   Users,
-  BookOpen,
-  MessageCircle,
-  TrendingUp,
+  UserCheck,
   Calendar,
+  BarChart3,
+  MessageSquareText,
+  Settings,
   Bell,
   Menu,
   LogOut,
@@ -28,80 +30,87 @@ import {
   Building2,
   Moon,
   Sun,
-  UserCheck,
+  UserPlus,
   Clock,
-  Target,
-  Award,
-  Phone,
-  Video,
-  FileText
+  CheckCircle,
+  AlertCircle,
+  Activity
 } from 'lucide-react';
 
-interface PrepChampionLayoutProps {
+interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-export default function PrepChampionLayout({ children }: PrepChampionLayoutProps) {
+export default function AdminLayout({ children }: AdminLayoutProps) {
   const { userData, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-  const [notifications] = useState(4); // Mock notification count
+  const [notifications] = useState(8); // Mock notification count
 
   const navigationItems = [
     {
-      href: '/prep-champion',
-      icon: <Heart className="h-5 w-5" />,
+      href: '/admin',
+      icon: <LayoutDashboard className="h-5 w-5" />,
       label: 'Dashboard',
-      description: 'Support overview'
+      description: 'Hospital overview'
     },
     {
-      href: '/prep-champion/patients',
+      href: '/admin/staff',
       icon: <Users className="h-5 w-5" />,
-      label: 'My Patients',
-      description: 'Supported patients'
+      label: 'Staff Management',
+      description: 'Doctors & PrEP champions'
     },
     {
-      href: '/prep-champion/education',
-      icon: <BookOpen className="h-5 w-5" />,
-      label: 'Education',
-      description: 'Materials & resources'
+      href: '/admin/patients',
+      icon: <UserCheck className="h-5 w-5" />,
+      label: 'Patients',
+      description: 'Patient management'
     },
     {
-      href: '/prep-champion/support',
-      icon: <MessageCircle className="h-5 w-5" />,
-      label: 'Support Sessions',
-      description: 'Counseling & guidance'
+      href: '/admin/appointments',
+      icon: <Calendar className="h-5 w-5" />,
+      label: 'Appointments',
+      description: 'Schedule management'
     },
     {
-      href: '/prep-champion/tracking',
-      icon: <TrendingUp className="h-5 w-5" />,
-      label: 'Progress Tracking',
-      description: 'Patient outcomes'
+      href: '/admin/requests',
+      icon: <MessageSquareText className="h-5 w-5" />,
+      label: 'Requests',
+      description: 'Patient requests & approvals'
+    },
+    {
+      href: '/admin/analytics',
+      icon: <BarChart3 className="h-5 w-5" />,
+      label: 'Analytics',
+      description: 'Hospital insights'
+    },
+    {
+      href: '/admin/settings',
+      icon: <Settings className="h-5 w-5" />,
+      label: 'Settings',
+      description: 'Hospital configuration'
     }
   ];
 
   const quickActions = [
     {
-      label: 'Scheduled Sessions',
+      label: 'Add Doctor',
+      icon: <UserPlus className="h-4 w-4" />,
+      action: () => navigate('/admin/staff?action=add-doctor'),
+      badge: null
+    },
+    {
+      label: 'Pending Approvals',
+      icon: <Clock className="h-4 w-4" />,
+      action: () => navigate('/admin/requests?filter=pending'),
+      badge: '5'
+    },
+    {
+      label: 'Today\'s Appointments',
       icon: <Calendar className="h-4 w-4" />,
-      action: () => navigate('/prep-champion/support?view=scheduled'),
-      badge: '3',
-      description: 'Today\'s support sessions'
-    },
-    {
-      label: 'Follow-up Calls',
-      icon: <Phone className="h-4 w-4" />,
-      action: () => navigate('/prep-champion/patients?action=follow-up'),
-      badge: '5',
-      description: 'Patients needing follow-up'
-    },
-    {
-      label: 'New Resources',
-      icon: <BookOpen className="h-4 w-4" />,
-      action: () => navigate('/prep-champion/education?filter=new'),
-      badge: '2',
-      description: 'Latest educational materials'
+      action: () => navigate('/admin/appointments?date=today'),
+      badge: '12'
     }
   ];
 
@@ -115,47 +124,35 @@ export default function PrepChampionLayout({ children }: PrepChampionLayoutProps
   };
 
   const isActiveRoute = (href: string) => {
-    if (href === '/prep-champion') {
-      return location.pathname === '/prep-champion';
+    if (href === '/admin') {
+      return location.pathname === '/admin';
     }
     return location.pathname.startsWith(href);
   };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Champion Profile */}
+      {/* Logo and Hospital Info */}
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-3">
-          <div className="bg-gradient-to-r from-pink-600 to-purple-600 p-2 rounded-lg">
-            <Heart className="h-6 w-6 text-white" />
+          <div className="bg-gradient-to-r from-green-600 to-blue-600 p-2 rounded-lg">
+            <Building2 className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h2 className="text-lg font-bold">{userData?.displayName}</h2>
-            <Badge variant="secondary" className="text-xs">PrEP Champion</Badge>
+            <h2 className="text-lg font-bold">{userData?.hospitalName || 'Hospital'}</h2>
+            <Badge variant="secondary" className="text-xs">Administrator</Badge>
           </div>
         </div>
         
-        {/* Hospital Info */}
-        <div className="mt-4 p-3 bg-pink-50 dark:bg-pink-950 rounded-lg border border-pink-200 dark:border-pink-800">
+        {/* Hospital Status */}
+        <div className="mt-4 p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
           <div className="flex items-center space-x-2">
-            <Building2 className="h-4 w-4 text-pink-600 dark:text-pink-400" />
-            <span className="text-sm font-medium text-pink-700 dark:text-pink-300">
-              {userData?.hospitalName || 'Hospital'}
-            </span>
+            <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+            <span className="text-xs font-medium text-green-700 dark:text-green-300">Hospital Active</span>
           </div>
-          <p className="text-xs text-pink-600 dark:text-pink-400 mt-1">
-            {userData?.department || 'Community Support Team'}
+          <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+            All systems operational
           </p>
-        </div>
-
-        {/* Achievement Badge */}
-        <div className="mt-3 p-2 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950 dark:to-orange-950 rounded-lg border border-yellow-200 dark:border-yellow-800">
-          <div className="flex items-center space-x-2">
-            <Award className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-            <span className="text-xs font-medium text-yellow-700 dark:text-yellow-300">
-              Top Supporter This Month
-            </span>
-          </div>
         </div>
       </div>
 
@@ -163,7 +160,7 @@ export default function PrepChampionLayout({ children }: PrepChampionLayoutProps
       <nav className="flex-1 p-4 space-y-2">
         <div className="mb-6">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            Patient Support
+            Hospital Management
           </p>
           <div className="space-y-1">
             {navigationItems.map((item) => (
@@ -172,11 +169,11 @@ export default function PrepChampionLayout({ children }: PrepChampionLayoutProps
                 to={item.href}
                 className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 group ${
                   isActiveRoute(item.href)
-                    ? 'bg-pink-50 dark:bg-pink-950 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-800'
+                    ? 'bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
               >
-                <div className={`${isActiveRoute(item.href) ? 'text-pink-600 dark:text-pink-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`}>
+                <div className={`${isActiveRoute(item.href) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'}`}>
                   {item.icon}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -191,55 +188,46 @@ export default function PrepChampionLayout({ children }: PrepChampionLayoutProps
         {/* Quick Actions */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            Today's Priorities
+            Quick Actions
           </p>
-          <div className="space-y-2">
+          <div className="space-y-1">
             {quickActions.map((action, index) => (
               <button
                 key={index}
                 onClick={action.action}
-                className="w-full flex items-start space-x-3 px-3 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-left"
+                className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
               >
-                <div className="mt-0.5">{action.icon}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{action.label}</span>
-                    {action.badge && (
-                      <Badge variant="secondary" className="ml-2">
-                        {action.badge}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {action.description}
-                  </p>
+                <div className="flex items-center space-x-3">
+                  {action.icon}
+                  <span>{action.label}</span>
                 </div>
+                {action.badge && (
+                  <Badge variant="secondary" className="ml-auto">
+                    {action.badge}
+                  </Badge>
+                )}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Support Stats */}
+        {/* Hospital Stats */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-            My Impact
+            Today's Overview
           </p>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600 dark:text-gray-400">Active Patients</span>
-              <span className="font-medium text-pink-600">18</span>
+              <span className="font-medium">147</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Sessions This Week</span>
-              <span className="font-medium text-purple-600">12</span>
+              <span className="text-gray-600 dark:text-gray-400">Staff Online</span>
+              <span className="font-medium text-green-600">8/12</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Success Rate</span>
-              <span className="font-medium text-green-600">94%</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Monthly Rank</span>
-              <span className="font-medium text-yellow-600">#1</span>
+              <span className="text-gray-600 dark:text-gray-400">Pending Tasks</span>
+              <span className="font-medium text-orange-600">5</span>
             </div>
           </div>
         </div>
@@ -250,8 +238,8 @@ export default function PrepChampionLayout({ children }: PrepChampionLayoutProps
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10">
             <AvatarImage src="/api/placeholder/40/40" />
-            <AvatarFallback className="bg-gradient-to-r from-pink-600 to-purple-600 text-white">
-              {userData?.displayName?.substring(0, 2).toUpperCase() || 'PC'}
+            <AvatarFallback className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+              {userData?.displayName?.substring(0, 2).toUpperCase() || 'AD'}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
@@ -290,10 +278,10 @@ export default function PrepChampionLayout({ children }: PrepChampionLayoutProps
             {/* Page Title */}
             <div>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Community Support
+                Hospital Administration
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Empowering patients on their PrEP/PEP journey
+                {userData?.hospitalName || 'Manage your hospital operations'}
               </p>
             </div>
           </div>
@@ -303,12 +291,12 @@ export default function PrepChampionLayout({ children }: PrepChampionLayoutProps
             {/* Quick Stats */}
             <div className="hidden md:flex items-center space-x-4 text-sm">
               <div className="flex items-center space-x-2">
-                <Target className="h-4 w-4 text-pink-500" />
-                <span className="text-gray-600 dark:text-gray-400">18 Active</span>
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span className="text-gray-600 dark:text-gray-400">12 Appointments</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4 text-purple-500" />
-                <span className="text-gray-600 dark:text-gray-400">3 Sessions</span>
+                <AlertCircle className="h-4 w-4 text-orange-500" />
+                <span className="text-gray-600 dark:text-gray-400">5 Pending</span>
               </div>
             </div>
 
@@ -337,8 +325,8 @@ export default function PrepChampionLayout({ children }: PrepChampionLayoutProps
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src="/api/placeholder/40/40" />
-                    <AvatarFallback className="bg-gradient-to-r from-pink-600 to-purple-600 text-white">
-                      {userData?.displayName?.substring(0, 2).toUpperCase() || 'PC'}
+                    <AvatarFallback className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+                      {userData?.displayName?.substring(0, 2).toUpperCase() || 'AD'}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -348,25 +336,21 @@ export default function PrepChampionLayout({ children }: PrepChampionLayoutProps
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">{userData?.displayName}</p>
                     <p className="text-xs leading-none text-muted-foreground">{userData?.email}</p>
-                    <Badge variant="secondary" className="w-fit">PrEP Champion</Badge>
+                    <Badge variant="secondary" className="w-fit">Administrator</Badge>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/prep-champion/profile')}>
+                <DropdownMenuItem onClick={() => navigate('/admin/profile')}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/prep-champion/patients')}>
-                  <Users className="mr-2 h-4 w-4" />
-                  <span>My Patients</span>
+                <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Hospital Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/prep-champion/support')}>
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  <span>Support Sessions</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/prep-champion/tracking')}>
-                  <TrendingUp className="mr-2 h-4 w-4" />
-                  <span>Progress Reports</span>
+                <DropdownMenuItem onClick={() => navigate('/admin/analytics')}>
+                  <Activity className="mr-2 h-4 w-4" />
+                  <span>View Analytics</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400">
