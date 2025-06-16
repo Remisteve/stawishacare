@@ -1,9 +1,7 @@
-"use client"
-import React, { ReactNode, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation'; // ✅ Next.js routing
+import React, { ReactNode } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner'; // ✅ Next.js compatible toast
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -12,29 +10,7 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { currentUser, userData, loading } = useAuth();
-  const router = useRouter(); // ✅ Next.js router
-  const pathname = usePathname(); // ✅ Next.js pathname
-
-  // Handle redirects in useEffect
-  useEffect(() => {
-    if (loading) return; // Wait for auth to load
-
-    // Redirect to login if not authenticated
-    if (!currentUser || !userData) {
-      toast.error("Please login to access this area");
-      router.push(`/auth/login?redirect=${encodeURIComponent(pathname ?? "")}`); // ✅ Next.js navigation
-      return;
-    }
-
-    // Check if user has required role
-    if (!allowedRoles.includes(userData.role)) {
-      toast.warning("Access denied - insufficient permissions");
-      // Redirect based on user role
-      const redirectPath = getRoleBasedRedirect(userData.role);
-      router.replace(redirectPath); // ✅ Next.js navigation
-      return;
-    }
-  }, [currentUser, userData, loading, allowedRoles, router, pathname]);
+  const location = useLocation();
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -48,16 +24,9 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     );
   }
 
-  // Show loading while redirecting (prevents flash of content)
+  // Redirect to login if not authenticated
   if (!currentUser || !userData) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Redirecting...</p>
-        </div>
-      </div>
-    );
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // Check if user is approved
@@ -74,7 +43,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
               or wait for approval to access the system.
             </p>
             <button
-              onClick={() => router.push('/auth/login')} // ✅ Next.js navigation
+              onClick={() => window.location.href = '/login'}
               className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition-colors"
             >
               Back to Login
@@ -85,16 +54,11 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     );
   }
 
-  // Show loading while checking role (prevents flash)
+  // Check if user has required role
   if (!allowedRoles.includes(userData.role)) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Redirecting...</p>
-        </div>
-      </div>
-    );
+    // Redirect based on user role
+    const redirectPath = getRoleBasedRedirect(userData.role);
+    return <Navigate to={redirectPath} replace />;
   }
 
   // User is authenticated, approved, and has the right role
@@ -115,6 +79,6 @@ function getRoleBasedRedirect(role: string): string {
     case 'patient':
       return '/patient';
     default:
-      return '/auth/login';
+      return '/login';
   }
 }

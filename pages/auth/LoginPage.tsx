@@ -1,7 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,11 +19,10 @@ export default function LoginPage() {
   const [error, setError] = useState('');
 
   const { login } = useAuth();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Next.js equivalent of location.state?.from?.pathname
-  const from = searchParams?.get('from') || '/';
+  const from = (location.state as any)?.from?.pathname || '/';
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -44,10 +42,10 @@ export default function LoginPage() {
       
       // Redirect based on user role or to the intended page
       if (from !== '/') {
-        router.replace(from);
+        navigate(from, { replace: true });
       } else {
         // Will be redirected by ProtectedRoute based on role
-        router.push('/patient'); // Default fallback
+        navigate('/patient'); // Default fallback
       }
     } catch (error: any) {
       setError(error.message || 'Login failed. Please try again.');
@@ -147,7 +145,7 @@ export default function LoginPage() {
             <p className="text-gray-600">
               Don't have an account?{' '}
               <Link
-                href="/auth/register"
+                to="/register"
                 className="font-medium text-blue-600 hover:text-blue-500 hover:underline"
               >
                 Register here
@@ -160,7 +158,7 @@ export default function LoginPage() {
               Are you a patient looking to join?
             </p>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/patient-register">
+              <Link to="/patient-register">
                 Patient Self-Registration
               </Link>
             </Button>
@@ -173,7 +171,7 @@ export default function LoginPage() {
               className="w-full"
               asChild
             >
-              <Link href="/">
+              <Link to="/">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Home
               </Link>
@@ -200,7 +198,7 @@ export default function LoginPage() {
             <div className="pt-2 border-t">
               <p className="text-xs text-gray-500">
                 Patients should use{' '}
-                <Link href="/patient-register" className="text-blue-600 hover:underline">
+                <Link to="/patient-register" className="text-blue-600 hover:underline">
                   self-registration
                 </Link>
               </p>

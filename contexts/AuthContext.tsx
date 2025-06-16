@@ -48,7 +48,6 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateUserProfile: (data: Partial<UserData>) => Promise<void>;
   refreshUserData: () => Promise<void>;
-  fixMissingUserData: (email: string, password: string, displayName: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -69,6 +68,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+
 
   // Fetch user data from Firestore
   const fetchUserData = async (uid: string): Promise<UserData | null> => {
@@ -102,73 +102,15 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  // Create missing Firestore document for existing auth user
-  const createMissingUserDocument = async (user: User, displayName?: string) => {
-    try {
-      // Check if this should be a superadmin (first user)
-      const usersQuery = query(collection(db, 'users'), where('role', '==', 'superadmin'));
-      const existingSuperAdmins = await getDocs(usersQuery);
-      
-      const userData: UserData = {
-        uid: user.uid,
-        email: user.email || '',
-        displayName: displayName || user.displayName || user.email?.split('@')[0] || 'User',
-        role: existingSuperAdmins.empty ? 'superadmin' : 'patient',
-        isApproved: existingSuperAdmins.empty ? true : false, // SuperAdmin auto-approved
-        createdAt: new Date(),
-        lastActive: new Date(),
-        profileComplete: false,
-      };
-
-      await setDoc(doc(db, 'users', user.uid), userData);
-      return userData;
-    } catch (error) {
-      console.error('Error creating user document:', error);
-      throw error;
-    }
-  };
-
-  // Fix missing user data (for existing auth accounts without Firestore docs)
-  const fixMissingUserData = async (email: string, password: string, displayName: string) => {
-    try {
-      setLoading(true);
-      
-      // Sign in to get the user
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      
-      // Check if Firestore document exists
-      const existingData = await fetchUserData(result.user.uid);
-      if (existingData) {
-        throw new Error('User data already exists');
-      }
-
-      // Create the missing document
-      const newUserData = await createMissingUserDocument(result.user, displayName);
-      setUserData(newUserData);
-      
-      toast.success('Account fixed! You can now use the system normally.');
-      return;
-      
-    } catch (error: any) {
-      console.error('Fix error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Enhanced login function with auto-fix
+  // Login function
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
       const result = await signInWithEmailAndPassword(auth, email, password);
-      let userData = await fetchUserData(result.user.uid);
+      const userData = await fetchUserData(result.user.uid);
       
-      // If no Firestore document exists, create it automatically
       if (!userData) {
-        console.log('No Firestore document found, creating one...');
-        userData = await createMissingUserDocument(result.user);
-        toast.success('Account setup completed automatically!');
+        throw new Error('User data not found');
       }
 
       if (!userData.isApproved) {
@@ -179,9 +121,16 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       setUserData(userData);
       await updateLastActive(result.user.uid);
       
-      toast.success(`Welcome back, ${userData.displayName}!`);
+      toast({
+        title: "Login Successful",
+        description: `Welcome back, ${userData.displayName}!`,
+      });
     } catch (error: any) {
-      console.error('Login error:', error);
+      toast({
+        title: "Login Failed",
+        description: error.message,
+        variant: "destructive",
+      });
       throw error;
     } finally {
       setLoading(false);
@@ -240,13 +189,18 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       await setDoc(doc(db, 'users', result.user.uid), newUserData);
       setUserData(newUserData);
 
-      toast.success(
-        isApproved 
+      toast({
+        title: "Registration Successful",
+        description: isApproved 
           ? "Account created successfully!" 
-          : "Account created! Waiting for approval."
-      );
+          : "Account created! Waiting for approval.",
+      });
     } catch (error: any) {
-      console.error('Registration error:', error);
+      toast({
+        title: "Registration Failed",
+        description: error.message,
+        variant: "destructive",
+      });
       throw error;
     } finally {
       setLoading(false);
@@ -258,10 +212,16 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     try {
       await signOut(auth);
       setUserData(null);
-      toast.success("You have been successfully logged out.");
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+      });
     } catch (error: any) {
-      console.error('Logout error:', error);
-      toast.error("Logout failed: " + error.message);
+      toast({
+        title: "Logout Failed",
+        description: error.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -278,10 +238,16 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       
       setUserData({ ...userData, ...data });
       
-      toast.success("Your profile has been updated successfully.");
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been updated successfully.",
+      });
     } catch (error: any) {
-      console.error('Update error:', error);
-      toast.error("Update failed: " + error.message);
+      toast({
+        title: "Update Failed",
+        description: error.message,
+        variant: "destructive",
+      });
       throw error;
     }
   };
@@ -322,7 +288,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     logout,
     updateUserProfile,
     refreshUserData,
-    fixMissingUserData,
   };
 
   return (

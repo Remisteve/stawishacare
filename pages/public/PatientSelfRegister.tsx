@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,141 +8,91 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Eye, EyeOff, Heart, ArrowLeft, MapPin, Calendar, Phone, Mail, User } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, Eye, EyeOff, Heart, ArrowLeft, MapPin, Building2, CheckCircle, Shield } from 'lucide-react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
-// (Firestore hospitals loading logic moved inside the PatientSelfRegister component below)
+interface Hospital {
+  id: string;
+  name: string;
+  location: string;
+  features: {
+    hasCondomServices: boolean;
+    isPrepProvider: boolean;
+    isPepProvider: boolean;
+  };
+  distance?: number;
+}
 
 export default function PatientSelfRegister() {
-  const router = useRouter();
   const [formData, setFormData] = useState({
-    // Personal Information
-    firstName: '',
-    lastName: '',
     email: '',
-    phone: '',
-    dateOfBirth: '',
-    gender: '',
-    
-    // Address Information
-    address: '',
-    city: '',
-    postalCode: '',
-    
-    // Account Information
     password: '',
     confirmPassword: '',
-    
-    // Hospital Selection
+    displayName: '',
+    phone: '',
+    location: '',
     hospitalId: '',
-    
-    // Emergency Contact
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-    emergencyContactRelationship: '',
-    
-    // Medical Information (Optional)
-    allergies: '',
-    currentMedications: '',
-    insuranceProvider: '',
-    insuranceNumber: ''
+    patientStatus: '',
+    age: '',
+    emergencyContact: '',
+    emergencyPhone: ''
   });
-
-  const [hospitals, setHospitals] = useState<any[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingHospitals, setLoadingHospitals] = useState(true);
+  const [hospitalsLoading, setHospitalsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [currentStep, setCurrentStep] = useState(1);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
 
   const { register } = useAuth();
+  const navigate = useNavigate();
 
-  // Load hospitals from Firestore
+  // Fetch available hospitals
   useEffect(() => {
-    const loadHospitals = async () => {
+    const fetchHospitals = async () => {
       try {
-        const hospitalsRef = collection(db, 'hospitals');
-        const q = query(hospitalsRef, where('type', '==', 'hospital'));
-        const querySnapshot = await getDocs(q);
-        const hospitalsData = querySnapshot.docs.map(doc => ({
+        const hospitalsQuery = query(collection(db, 'hospitals'));
+        const snapshot = await getDocs(hospitalsQuery);
+        const hospitalData = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
-        }));
-        setHospitals(hospitalsData);
+        })) as Hospital[];
+        setHospitals(hospitalData);
       } catch (error) {
-        console.error('Error loading hospitals:', error);
+        console.error('Error fetching hospitals:', error);
         setError('Failed to load hospitals. Please try again.');
       } finally {
-        setLoadingHospitals(false);
+        setHospitalsLoading(false);
       }
     };
 
-    loadHospitals();
+    fetchHospitals();
   }, []);
 
-  // Handle input changes for text fields
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [e.target.name]: e.target.value
     }));
+    setError('');
   };
 
-  // Handle select changes
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [field]: value
     }));
-  };
-
-  // Validate each step
-  const validateStep = (step: number): boolean => {
-    switch (step) {
-      case 1:
-        return (
-          !!formData.firstName &&
-          !!formData.lastName &&
-          !!formData.email &&
-          !!formData.phone &&
-          !!formData.dateOfBirth &&
-          !!formData.gender
-        );
-      case 2:
-        return !!formData.address && !!formData.city && !!formData.hospitalId;
-      case 3:
-        return (
-          !!formData.password &&
-          !!formData.confirmPassword &&
-          formData.password === formData.confirmPassword &&
-          formData.password.length >= 6
-        );
-      case 4:
-        return (
-          !!formData.emergencyContactName &&
-          !!formData.emergencyContactPhone &&
-          !!formData.emergencyContactRelationship
-        );
-      default:
-        return true;
+    
+    if (field === 'hospitalId') {
+      const hospital = hospitals.find(h => h.id === value);
+      setSelectedHospital(hospital || null);
     }
-  };
-
-  const nextStep = () => {
-    if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 5));
-      setError('');
-    } else {
-      setError('Please fill in all required fields correctly.');
-    }
-  };
-
-  const prevStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
+    
     setError('');
   };
 
@@ -151,7 +101,7 @@ export default function PatientSelfRegister() {
     setLoading(true);
     setError('');
 
-    // Final validation
+    // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -164,49 +114,32 @@ export default function PatientSelfRegister() {
       return;
     }
 
+    if (!agreedToTerms) {
+      setError('Please agree to the terms and conditions');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.hospitalId) {
+      setError('Please select a hospital');
+      setLoading(false);
+      return;
+    }
+
     try {
       const userData = {
-        // Personal Info
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        displayName: `${formData.firstName} ${formData.lastName}`,
-        phone: formData.phone,
-        dateOfBirth: formData.dateOfBirth,
-        gender: formData.gender,
-        
-        // Address
-        address: formData.address,
-        city: formData.city,
-        postalCode: formData.postalCode,
-        
-        // Hospital Assignment (Patient chooses their hospital)
+        displayName: formData.displayName,
+        role: 'patient' as const,
         hospitalId: formData.hospitalId,
-        
-        // Emergency Contact
-        emergencyContact: {
-          name: formData.emergencyContactName,
-          phone: formData.emergencyContactPhone,
-          relationship: formData.emergencyContactRelationship
-        },
-        
-        // Medical Info (if provided)
-        allergies: formData.allergies || '',
-        currentMedications: formData.currentMedications || '',
-        insurance: {
-          provider: formData.insuranceProvider || '',
-          number: formData.insuranceNumber || ''
-        },
-        
-        // Role and Status
-        role: "patient" as "patient",
-        registrationType: 'self', // vs 'doctor' when registered by doctor
-        isApproved: true, // Patients are auto-approved for self-registration
-        createdAt: new Date(),
-        updatedAt: new Date()
+        hospitalName: selectedHospital?.name,
+        phone: formData.phone,
+        location: formData.location,
+        patientStatus: formData.patientStatus as 'prep' | 'pep' | 'condom' | 'general',
+        videoUploadStatus: 'pending' as const
       };
 
       await register(formData.email, formData.password, userData);
-      router.push('/patient/dashboard');
+      navigate('/patient');
     } catch (error: any) {
       setError(error.message || 'Registration failed. Please try again.');
     } finally {
@@ -214,240 +147,256 @@ export default function PatientSelfRegister() {
     }
   };
 
-  const getStepTitle = () => {
-    switch (currentStep) {
-      case 1: return 'Personal Information';
-      case 2: return 'Address & Hospital';
-      case 3: return 'Account Security';
-      case 4: return 'Emergency Contact';
-      case 5: return 'Medical Information (Optional)';
-      default: return '';
-    }
+  const isFormValid = 
+    formData.email && 
+    formData.password && 
+    formData.confirmPassword && 
+    formData.displayName &&
+    formData.phone &&
+    formData.location &&
+    formData.hospitalId &&
+    formData.patientStatus &&
+    agreedToTerms;
+
+  const getServiceBadges = (hospital: Hospital) => {
+    const badges = [];
+    if (hospital.features.isPrepProvider) badges.push('PrEP');
+    if (hospital.features.isPepProvider) badges.push('PEP');
+    if (hospital.features.hasCondomServices) badges.push('Condom Services');
+    return badges;
   };
 
-  if (loadingHospitals) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading registration form...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-full">
-              <Heart className="h-8 w-8 text-white" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Patient Registration</h1>
-          <p className="text-gray-600">Join our HIV prevention care platform</p>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            {[1, 2, 3, 4, 5].map((step) => (
-              <div key={step} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                  step <= currentStep 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-200 text-gray-600'
-                }`}>
-                  {step}
-                </div>
-                {step < 5 && (
-                  <div className={`w-12 h-1 mx-2 ${
-                    step < currentStep ? 'bg-blue-600' : 'bg-gray-200'
-                  }`} />
-                )}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
+      <div className="max-w-2xl mx-auto py-8">
+        <Card>
+          <CardHeader className="space-y-1">
+            <div className="flex items-center justify-center mb-4">
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-full">
+                <Heart className="h-6 w-6 text-white" />
               </div>
-            ))}
-          </div>
-          <p className="text-sm text-gray-600 text-center">Step {currentStep} of 5: {getStepTitle()}</p>
-        </div>
-
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              {currentStep === 1 && <User className="mr-2 h-5 w-5" />}
-              {currentStep === 2 && <MapPin className="mr-2 h-5 w-5" />}
-              {currentStep === 3 && <Eye className="mr-2 h-5 w-5" />}
-              {currentStep === 4 && <Phone className="mr-2 h-5 w-5" />}
-              {currentStep === 5 && <Calendar className="mr-2 h-5 w-5" />}
-              {getStepTitle()}
+            </div>
+            <CardTitle className="text-2xl font-bold text-center">
+              Patient Registration
             </CardTitle>
-            <CardDescription>
-              {currentStep === 1 && "Tell us about yourself"}
-              {currentStep === 2 && "Where are you located and which hospital would you like to join?"}
-              {currentStep === 3 && "Create your secure account password"}
-              {currentStep === 4 && "Someone we can contact in case of emergency"}
-              {currentStep === 5 && "Optional medical information to help us serve you better"}
+            <CardDescription className="text-center">
+              Join our PrEP/PEP care community and take control of your health
             </CardDescription>
           </CardHeader>
-
+          
           <CardContent>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
-                <Alert variant="destructive" className="mb-6">
+                <Alert variant="destructive">
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
-              {/* Step 1: Personal Information */}
-              {currentStep === 1 && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name *</Label>
-                      <Input
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        placeholder="Enter first name"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name *</Label>
-                      <Input
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        placeholder="Enter last name"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address *</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="your.email@example.com"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number *</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="+1234567890"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="dateOfBirth">Date of Birth *</Label>
-                      <Input
-                        id="dateOfBirth"
-                        name="dateOfBirth"
-                        type="date"
-                        value={formData.dateOfBirth}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="gender">Gender *</Label>
-                      <Select value={formData.gender} onValueChange={(value: string) => handleSelectChange('gender', value)}>
-                        <SelectTrigger id="gender" aria-labelledby="gender-label">
-                          <SelectValue placeholder="Select gender" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="non-binary">Non-binary</SelectItem>
-                          <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 2: Address & Hospital */}
-              {currentStep === 2 && (
-                <div className="space-y-4">
+              {/* Personal Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center">
+                  <Shield className="h-5 w-5 mr-2" />
+                  Personal Information
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="address">Street Address *</Label>
+                    <Label htmlFor="displayName">Full Name *</Label>
                     <Input
-                      id="address"
-                      name="address"
-                      value={formData.address}
+                      id="displayName"
+                      name="displayName"
+                      type="text"
+                      placeholder="Enter your full name"
+                      value={formData.displayName}
                       onChange={handleInputChange}
-                      placeholder="123 Main Street"
                       required
+                      disabled={loading}
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="city">City *</Label>
-                      <Input
-                        id="city"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        placeholder="Your city"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="postalCode">Postal Code</Label>
-                      <Input
-                        id="postalCode"
-                        name="postalCode"
-                        value={formData.postalCode}
-                        onChange={handleInputChange}
-                        placeholder="12345"
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="age">Age *</Label>
+                    <Input
+                      id="age"
+                      name="age"
+                      type="number"
+                      placeholder="Your age"
+                      value={formData.age}
+                      onChange={handleInputChange}
+                      min="18"
+                      max="120"
+                      required
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      disabled={loading}
+                    />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="hospitalId">Choose Your Hospital *</Label>
-                    <Select value={formData.hospitalId} onValueChange={(value: string) => handleSelectChange('hospitalId', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your preferred hospital" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {hospitals.map((hospital) => (
-                          <SelectItem key={hospital.id} value={hospital.id}>
-                            {hospital.name} - {hospital.city}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <p className="text-sm text-gray-600">
-                      You can receive care at this hospital and its affiliated clinics.
-                    </p>
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="Your phone number"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      required
+                      disabled={loading}
+                    />
                   </div>
                 </div>
-              )}
 
-              {/* Step 3: Account Security */}
-              {currentStep === 3 && (
-                <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location/Address *</Label>
+                  <Input
+                    id="location"
+                    name="location"
+                    type="text"
+                    placeholder="City, State/Region"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+
+              {/* Emergency Contact */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Emergency Contact</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="emergencyContact">Contact Name</Label>
+                    <Input
+                      id="emergencyContact"
+                      name="emergencyContact"
+                      type="text"
+                      placeholder="Emergency contact name"
+                      value={formData.emergencyContact}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="emergencyPhone">Contact Phone</Label>
+                    <Input
+                      id="emergencyPhone"
+                      name="emergencyPhone"
+                      type="tel"
+                      placeholder="Emergency contact phone"
+                      value={formData.emergencyPhone}
+                      onChange={handleInputChange}
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Service Type */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Service Requested *</h3>
+                <Select 
+                  value={formData.patientStatus} 
+                  onValueChange={(value) => handleSelectChange('patientStatus', value)}
+                  disabled={loading}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select the service you need" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="prep">PrEP (Pre-Exposure Prophylaxis)</SelectItem>
+                    <SelectItem value="pep">PEP (Post-Exposure Prophylaxis)</SelectItem>
+                    <SelectItem value="condom">Condom Services</SelectItem>
+                    <SelectItem value="general">General HIV Prevention Care</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Hospital Selection */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center">
+                  <Building2 className="h-5 w-5 mr-2" />
+                  Choose Hospital *
+                </h3>
+                
+                {hospitalsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                    Loading hospitals...
+                  </div>
+                ) : (
+                  <Select 
+                    value={formData.hospitalId} 
+                    onValueChange={(value) => handleSelectChange('hospitalId', value)}
+                    disabled={loading}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a hospital near you" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {hospitals.map((hospital) => (
+                        <SelectItem key={hospital.id} value={hospital.id}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{hospital.name}</span>
+                            <span className="text-xs text-gray-500 flex items-center">
+                              <MapPin className="h-3 w-3 mr-1" />
+                              {hospital.location}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                {selectedHospital && (
+                  <Card className="p-4 bg-blue-50 border-blue-200">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="font-medium">{selectedHospital.name}</h4>
+                        <p className="text-sm text-gray-600 flex items-center">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          {selectedHospital.location}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <p className="text-sm font-medium mb-2">Available Services:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {getServiceBadges(selectedHospital).map((service) => (
+                          <Badge key={service} variant="secondary" className="text-xs">
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            {service}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </Card>
+                )}
+              </div>
+
+              {/* Password Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Account Security</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="password">Password *</Label>
                     <div className="relative">
@@ -455,10 +404,11 @@ export default function PatientSelfRegister() {
                         id="password"
                         name="password"
                         type={showPassword ? 'text' : 'password'}
+                        placeholder="Create a strong password"
                         value={formData.password}
                         onChange={handleInputChange}
-                        placeholder="Create a strong password"
                         required
+                        disabled={loading}
                       />
                       <Button
                         type="button"
@@ -466,11 +416,11 @@ export default function PatientSelfRegister() {
                         size="sm"
                         className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                         onClick={() => setShowPassword(!showPassword)}
+                        disabled={loading}
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>
-                    <p className="text-sm text-gray-600">Password must be at least 6 characters long</p>
                   </div>
 
                   <div className="space-y-2">
@@ -480,10 +430,11 @@ export default function PatientSelfRegister() {
                         id="confirmPassword"
                         name="confirmPassword"
                         type={showConfirmPassword ? 'text' : 'password'}
+                        placeholder="Confirm your password"
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        placeholder="Confirm your password"
                         required
+                        disabled={loading}
                       />
                       <Button
                         type="button"
@@ -491,186 +442,92 @@ export default function PatientSelfRegister() {
                         size="sm"
                         className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        disabled={loading}
                       >
                         {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
 
-              {/* Step 4: Emergency Contact */}
-              {currentStep === 4 && (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="emergencyContactName">Emergency Contact Name *</Label>
-                    <Input
-                      id="emergencyContactName"
-                      name="emergencyContactName"
-                      value={formData.emergencyContactName}
-                      onChange={handleInputChange}
-                      placeholder="Full name of emergency contact"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="emergencyContactPhone">Emergency Contact Phone *</Label>
-                      <Input
-                        id="emergencyContactPhone"
-                        name="emergencyContactPhone"
-                        type="tel"
-                        value={formData.emergencyContactPhone}
-                        onChange={handleInputChange}
-                        placeholder="+1234567890"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="emergencyContactRelationship">Relationship *</Label>
-                      <Select value={formData.emergencyContactRelationship} onValueChange={(value: string) => handleSelectChange('emergencyContactRelationship', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select relationship" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="spouse">Spouse</SelectItem>
-                          <SelectItem value="parent">Parent</SelectItem>
-                          <SelectItem value="sibling">Sibling</SelectItem>
-                          <SelectItem value="child">Child</SelectItem>
-                          <SelectItem value="friend">Friend</SelectItem>
-                          <SelectItem value="partner">Partner</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 5: Medical Information (Optional) */}
-              {currentStep === 5 && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="insuranceProvider">Insurance Provider</Label>
-                      <Input
-                        id="insuranceProvider"
-                        name="insuranceProvider"
-                        value={formData.insuranceProvider}
-                        onChange={handleInputChange}
-                        placeholder="Insurance company name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="insuranceNumber">Insurance Number</Label>
-                      <Input
-                        id="insuranceNumber"
-                        name="insuranceNumber"
-                        value={formData.insuranceNumber}
-                        onChange={handleInputChange}
-                        placeholder="Policy/Member number"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="allergies">Known Allergies</Label>
-                    <Textarea
-                      id="allergies"
-                      name="allergies"
-                      value={formData.allergies}
-                      onChange={handleInputChange}
-                      placeholder="List any known allergies (medications, foods, etc.)"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="currentMedications">Current Medications</Label>
-                    <Textarea
-                      id="currentMedications"
-                      name="currentMedications"
-                      value={formData.currentMedications}
-                      onChange={handleInputChange}
-                      placeholder="List any medications you're currently taking"
-                      rows={3}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Navigation Buttons */}
-              <div className="flex justify-between pt-6">
-                <div>
-                  {currentStep > 1 && (
-                    <Button type="button" variant="outline" onClick={prevStep}>
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Previous
-                    </Button>
-                  )}
-                </div>
-
-                <div className="flex gap-2">
-                  {currentStep < 5 ? (
-                    <Button 
-                      type="button" 
-                      onClick={nextStep}
-                      disabled={!validateStep(currentStep)}
-                    >
-                      Next Step
-                    </Button>
-                  ) : (
-                    <Button 
-                      type="submit" 
-                      disabled={loading}
-                      className="bg-blue-600 hover:bg-blue-700"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating Account...
-                        </>
-                      ) : (
-                        'Complete Registration'
-                      )}
-                    </Button>
-                  )}
+              {/* Terms and Conditions */}
+              <div className="space-y-4">
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="terms"
+                    checked={agreedToTerms}
+                    onCheckedChange={setAgreedToTerms}
+                    disabled={loading}
+                  />
+                  <Label htmlFor="terms" className="text-sm leading-relaxed">
+                    I agree to the{' '}
+                    <Link to="/terms" className="text-blue-600 hover:underline">
+                      Terms and Conditions
+                    </Link>{' '}
+                    and{' '}
+                    <Link to="/privacy" className="text-blue-600 hover:underline">
+                      Privacy Policy
+                    </Link>.
+                    I understand that my information will be shared with my selected hospital for care coordination.
+                  </Label>
                 </div>
               </div>
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!isFormValid || loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  'Create Patient Account'
+                )}
+              </Button>
             </form>
+
+            <div className="mt-6 text-center text-sm">
+              <p className="text-gray-600">
+                Already have an account?{' '}
+                <Link
+                  to="/login"
+                  className="font-medium text-blue-600 hover:text-blue-500 hover:underline"
+                >
+                  Sign in here
+                </Link>
+              </p>
+            </div>
+
+            <div className="mt-4 text-center">
+              <p className="text-xs text-gray-500 mb-2">
+                Are you a healthcare provider?
+              </p>
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/register">
+                  Staff Registration
+                </Link>
+              </Button>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full"
+                asChild
+              >
+                <Link to="/">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Home
+                </Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
-
-        {/* Footer Links */}
-        <div className="text-center mt-8 space-y-4">
-          <p className="text-sm text-gray-600">
-            Already have an account?{' '}
-            <Button 
-              variant="link" 
-              className="text-blue-600 hover:text-blue-700 font-medium p-0 h-auto"
-              onClick={() => router.push('/auth/login')}
-            >
-              Sign in here
-            </Button>
-          </p>
-          
-          <p className="text-sm text-gray-600">
-            Are you a healthcare provider?{' '}
-            <Button 
-              variant="link" 
-              className="text-blue-600 hover:text-blue-700 font-medium p-0 h-auto"
-              onClick={() => router.push('/auth/login')}
-            >
-              Staff Login
-            </Button>
-          </p>
-
-          <Button variant="ghost" size="sm" onClick={() => router.push('/')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Button>
-        </div>
       </div>
     </div>
   );
