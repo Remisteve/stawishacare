@@ -7,431 +7,400 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Building2,
-  Users,
-  Activity,
-  TrendingUp,
-  Shield,
-  Database,
-  Globe,
-  Zap,
-  UserPlus,
-  BarChart3,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  MapPin,
-  Stethoscope,
-  Heart
+  Building2, Users, Activity, TrendingUp, Shield, Database, Globe, Zap, UserPlus, BarChart3,
+  AlertTriangle, CheckCircle, Clock, MapPin, Stethoscope, Heart, Video, Calendar, DollarSign,
+  Target, Wifi, Eye, Brain, Baby, UserCheck, Crown, Lock, Settings, Package, MessageSquare,
+  FileText, Syringe, ShieldAlert, FileBarChart, Handshake, UserCog, Terminal
 } from 'lucide-react';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-// Mock data - replace with real Firebase data
+// Mock data
 const systemStats = {
-  totalHospitals: 23,
-  totalUsers: 1247,
-  activePatients: 892,
-  systemUptime: 99.9,
-  dailyActiveUsers: 456,
-  weeklyGrowth: 12.5,
-  monthlyRevenue: 45600,
-  criticalAlerts: 2
+  totalHospitals: 47,
+  totalUsers: 3247,
+  activePatients: 2892,
+  systemUptime: 99.97,
+  dailyActiveUsers: 1456,
+  weeklyGrowth: 23.8,
+  monthlyRevenue: 125600,
+  criticalAlerts: 3,
+  discordantCouples: 156,
+  teenPregnancies: 89,
+  violenceCases: 23,
+  mchPatients: 445,
+  condomDistribution: 15670,
+  adRevenue: 8950,
+  locationEnabled: 2340,
+  pendingRequests: 67,
+  prepUsers: 1234,
+  pepUsers: 89,
+  chatMessages: 15670,
+  videoUploads: 234,
+  aiPredictions: 1567,
+  implementingPartners: 12
 };
 
-const recentHospitals = [
-  { id: 1, name: 'General Hospital', location: 'Nairobi', status: 'active', users: 45, patients: 234 },
-  { id: 2, name: 'Community Health Center', location: 'Mombasa', status: 'pending', users: 12, patients: 89 },
-  { id: 3, name: 'Regional Medical Center', location: 'Kisumu', status: 'active', users: 28, patients: 156 },
-  { id: 4, name: 'City Clinic', location: 'Eldoret', status: 'active', users: 15, patients: 78 }
+const dashboardModules = [
+  {
+    id: 'superadmin',
+    title: 'SuperAdmin',
+    description: 'Master Control',
+    icon: Crown,
+    count: 1,
+    status: 'active',
+    color: 'from-amber-500 to-yellow-600',
+    borderColor: 'border-amber-500/20',
+    bgColor: 'bg-amber-500/10'
+  },
+  {
+    id: 'admin',
+    title: 'Administrators',
+    description: 'System Admins',
+    icon: UserCog,
+    count: 12,
+    status: 'active',
+    color: 'from-purple-500 to-purple-600',
+    borderColor: 'border-purple-500/20',
+    bgColor: 'bg-purple-500/10'
+  },
+  {
+    id: 'doctors',
+    title: 'Doctors',
+    description: 'Medical Staff',
+    icon: Stethoscope,
+    count: 89,
+    status: 'active',
+    color: 'from-blue-500 to-blue-600',
+    borderColor: 'border-blue-500/20',
+    bgColor: 'bg-blue-500/10'
+  },
+  {
+    id: 'prep-champions',
+    title: 'PrEP Champions',
+    description: 'Health Workers',
+    icon: Shield,
+    count: 56,
+    status: 'active',
+    color: 'from-green-500 to-green-600',
+    borderColor: 'border-green-500/20',
+    bgColor: 'bg-green-500/10'
+  },
+  {
+    id: 'patients',
+    title: 'Patients',
+    description: 'Active Users',
+    icon: Heart,
+    count: systemStats.activePatients,
+    status: 'active',
+    color: 'from-red-500 to-red-600',
+    borderColor: 'border-red-500/20',
+    bgColor: 'bg-red-500/10'
+  },
+  {
+    id: 'appointments',
+    title: 'Appointments',
+    description: 'Scheduling',
+    icon: Calendar,
+    count: 456,
+    status: 'active',
+    color: 'from-indigo-500 to-indigo-600',
+    borderColor: 'border-indigo-500/20',
+    bgColor: 'bg-indigo-500/10'
+  },
+  {
+    id: 'app-users',
+    title: 'App Users',
+    description: 'Mobile Analytics',
+    icon: Users,
+    count: systemStats.totalUsers,
+    status: 'active',
+    color: 'from-cyan-500 to-cyan-600',
+    borderColor: 'border-cyan-500/20',
+    bgColor: 'bg-cyan-500/10'
+  },
+  {
+    id: 'videos',
+    title: 'Videos',
+    description: 'Content Library',
+    icon: Video,
+    count: systemStats.videoUploads,
+    status: 'active',
+    color: 'from-pink-500 to-pink-600',
+    borderColor: 'border-pink-500/20',
+    bgColor: 'bg-pink-500/10'
+  },
+  {
+    id: 'locations',
+    title: 'Locations',
+    description: 'Geo Tracking',
+    icon: MapPin,
+    count: systemStats.locationEnabled,
+    status: 'active',
+    color: 'from-orange-500 to-orange-600',
+    borderColor: 'border-orange-500/20',
+    bgColor: 'bg-orange-500/10'
+  },
+  {
+    id: 'mch',
+    title: 'MCH',
+    description: 'Maternal Health',
+    icon: Baby,
+    count: systemStats.mchPatients,
+    status: 'active',
+    color: 'from-violet-500 to-violet-600',
+    borderColor: 'border-violet-500/20',
+    bgColor: 'bg-violet-500/10'
+  },
+  {
+    id: 'social-chats',
+    title: 'Social Chats',
+    description: 'Messaging',
+    icon: MessageSquare,
+    count: systemStats.chatMessages,
+    status: 'active',
+    color: 'from-teal-500 to-teal-600',
+    borderColor: 'border-teal-500/20',
+    bgColor: 'bg-teal-500/10'
+  },
+  {
+    id: 'pending-requests',
+    title: 'Pending',
+    description: 'Requests Queue',
+    icon: Clock,
+    count: systemStats.pendingRequests,
+    status: 'warning',
+    color: 'from-yellow-500 to-yellow-600',
+    borderColor: 'border-yellow-500/20',
+    bgColor: 'bg-yellow-500/10'
+  }
 ];
 
-const systemHealth = [
-  { component: 'Authentication', status: 'healthy', uptime: 99.8 },
-  { component: 'Database', status: 'healthy', uptime: 99.9 },
-  { component: 'Storage', status: 'warning', uptime: 98.5 },
-  { component: 'Notifications', status: 'healthy', uptime: 99.7 },
-  { component: 'Video Calls', status: 'healthy', uptime: 97.2 }
+const revenueData = [
+  { month: 'Jan', subscriptions: 8500, ads: 2300, donations: 12000 },
+  { month: 'Feb', subscriptions: 9200, ads: 2800, donations: 15600 },
+  { month: 'Mar', subscriptions: 10100, ads: 3200, donations: 18900 },
+  { month: 'Apr', subscriptions: 11500, ads: 3800, donations: 21200 },
+  { month: 'May', subscriptions: 12800, ads: 4500, donations: 24700 },
+  { month: 'Jun', subscriptions: 14200, ads: 5200, donations: 28300 }
 ];
 
-const recentActivities = [
-  { id: 1, type: 'hospital_added', message: 'New hospital "Metro Health" registered', time: '2 hours ago' },
-  { id: 2, type: 'user_approved', message: 'Dr. Sarah Johnson approved for General Hospital', time: '4 hours ago' },
-  { id: 3, type: 'system_alert', message: 'Storage capacity warning triggered', time: '6 hours ago' },
-  { id: 4, type: 'milestone', message: '1000+ active patients milestone reached', time: '1 day ago' }
+const criticalMetrics = [
+  { label: 'Violence Cases', value: 23, trend: '+5%', color: 'text-red-500' },
+  { label: 'Teen Pregnancies', value: 89, trend: '+12%', color: 'text-orange-500' },
+  { label: 'Pending Requests', value: 67, trend: '+8%', color: 'text-yellow-500' },
+  { label: 'System Health', value: '99.97%', trend: 'Stable', color: 'text-green-500' }
 ];
 
 export default function SuperAdminDashboard() {
-  const [loading, setLoading] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('overview');
+  const [selectedModule, setSelectedModule] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'healthy': return 'text-green-600 bg-green-100';
-      case 'warning': return 'text-yellow-600 bg-yellow-100';
-      case 'error': return 'text-red-600 bg-red-100';
-      case 'active': return 'text-green-600 bg-green-100';
-      case 'pending': return 'text-yellow-600 bg-yellow-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'hospital_added': return <Building2 className="h-4 w-4" />;
-      case 'user_approved': return <UserPlus className="h-4 w-4" />;
-      case 'system_alert': return <AlertTriangle className="h-4 w-4" />;
-      case 'milestone': return <TrendingUp className="h-4 w-4" />;
-      default: return <Activity className="h-4 w-4" />;
-    }
-  };
+  const StatCard = ({ icon: Icon, label, value, color, trend }) => (
+    <div className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${color} p-6`}>
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-2">
+          <Icon className="h-8 w-8 text-white/80" />
+          {trend && (
+            <span className="text-xs text-white/80 font-medium">{trend}</span>
+          )}
+        </div>
+        <h3 className="text-white/80 text-sm font-medium">{label}</h3>
+        <p className="text-2xl font-bold text-white mt-1">{value}</p>
+      </div>
+      <div className="absolute right-0 bottom-0 opacity-10">
+        <Icon className="h-24 w-24 text-white" />
+      </div>
+    </div>
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">SuperAdmin Dashboard</h1>
-          <p className="text-muted-foreground">
-            System-wide overview and management console
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button>
-            <Building2 className="h-4 w-4 mr-2" />
-            Add Hospital
-          </Button>
-          <Button variant="outline">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Create Admin
-          </Button>
-        </div>
-      </div>
-
-      {/* System Alerts */}
-      {systemStats.criticalAlerts > 0 && (
-        <Alert>
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            You have {systemStats.criticalAlerts} critical system alert(s) that require attention.
-            <Button variant="link" className="p-0 ml-2 h-auto">
-              View Details
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Hospitals</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{systemStats.totalHospitals}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 inline mr-1" />
-              +2 this month
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{systemStats.totalUsers}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 inline mr-1" />
-              +{systemStats.weeklyGrowth}% this week
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Patients</CardTitle>
-            <Heart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{systemStats.activePatients}</div>
-            <p className="text-xs text-muted-foreground">
-              {systemStats.dailyActiveUsers} active today
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">System Health</CardTitle>
-            <Zap className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{systemStats.systemUptime}%</div>
-            <p className="text-xs text-muted-foreground">
-              <CheckCircle className="h-3 w-3 inline mr-1" />
-              All systems operational
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Content Tabs */}
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="system">System</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Recent Activities */}
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Activity className="h-5 w-5 mr-2" />
-                  Recent Activities
-                </CardTitle>
-                <CardDescription>Latest system events and updates</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentActivities.map((activity) => (
-                    <div key={activity.id} className="flex items-start space-x-3">
-                      <div className="p-2 bg-muted rounded-full">
-                        {getActivityIcon(activity.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">{activity.message}</p>
-                        <p className="text-xs text-muted-foreground flex items-center">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {activity.time}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Stats</CardTitle>
-                <CardDescription>System performance metrics</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm">
-                    <span>Database Usage</span>
-                    <span>68%</span>
-                  </div>
-                  <Progress value={68} className="mt-1" />
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm">
-                    <span>Storage Usage</span>
-                    <span>45%</span>
-                  </div>
-                  <Progress value={45} className="mt-1" />
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm">
-                    <span>API Calls Today</span>
-                    <span>12.4K</span>
-                  </div>
-                  <Progress value={83} className="mt-1" />
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm">
-                    <span>Active Sessions</span>
-                    <span>234</span>
-                  </div>
-                  <Progress value={34} className="mt-1" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="hospitals" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span className="flex items-center">
-                  <Building2 className="h-5 w-5 mr-2" />
-                  Registered Hospitals
-                </span>
-                <Button>
-                  <Building2 className="h-4 w-4 mr-2" />
-                  Add Hospital
-                </Button>
-              </CardTitle>
-              <CardDescription>Manage all hospitals in the system</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentHospitals.map((hospital) => (
-                  <div key={hospital.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <Building2 className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium">{hospital.name}</h4>
-                        <p className="text-sm text-muted-foreground flex items-center">
-                          <MapPin className="h-3 w-3 mr-1" />
-                          {hospital.location}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-4">
-                      <div className="text-center">
-                        <p className="text-sm font-medium">{hospital.users}</p>
-                        <p className="text-xs text-muted-foreground">Staff</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm font-medium">{hospital.patients}</p>
-                        <p className="text-xs text-muted-foreground">Patients</p>
-                      </div>
-                      <Badge className={getStatusColor(hospital.status)}>
-                        {hospital.status}
-                      </Badge>
-                      <Button variant="outline" size="sm">
-                        Manage
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-4">
+              <div className="bg-gradient-to-r from-amber-500 to-yellow-600 p-2 rounded-lg">
+                <Crown className="h-6 w-6 text-white" />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="users" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Super Admins</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">2</div>
-                <p className="text-xs text-muted-foreground">System administrators</p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Hospital Admins</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">23</div>
-                <p className="text-xs text-muted-foreground">Hospital administrators</p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Doctors</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">156</div>
-                <p className="text-xs text-muted-foreground">Medical professionals</p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">PrEP Champions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">45</div>
-                <p className="text-xs text-muted-foreground">Peer support specialists</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>User Management</CardTitle>
-              <CardDescription>Manage user accounts and permissions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <p>User management features will be available here</p>
-                <Button>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Create User
-                </Button>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Master Control Center</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">SuperAdmin Dashboard</p>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="system" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Database className="h-5 w-5 mr-2" />
-                  System Health
-                </CardTitle>
-                <CardDescription>Monitor system components status</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {systemHealth.map((component, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{component.component}</p>
-                        <p className="text-xs text-muted-foreground">{component.uptime}% uptime</p>
-                      </div>
-                      <Badge className={getStatusColor(component.status)}>
-                        {component.status}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Globe className="h-5 w-5 mr-2" />
-                  Global Settings
-                </CardTitle>
-                <CardDescription>Platform-wide configuration</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Button variant="outline" className="w-full justify-start">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Security Settings
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Database className="h-4 w-4 mr-2" />
-                  Database Management
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Analytics Configuration
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Globe className="h-4 w-4 mr-2" />
-                  Platform Settings
-                </Button>
-              </CardContent>
-            </Card>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {currentTime.toLocaleString()}
+              </div>
+              <Badge variant="outline" className="border-green-500 text-green-600">
+                <span className="mr-1 h-2 w-2 bg-green-500 rounded-full animate-pulse"></span>
+                System Online
+              </Badge>
+              <Badge variant="outline" className="border-red-500 text-red-600">
+                {systemStats.criticalAlerts} Alerts
+              </Badge>
+            </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard 
+            icon={Users} 
+            label="Total Users" 
+            value={systemStats.totalUsers.toLocaleString()} 
+            color="from-blue-500 to-blue-600"
+            trend="+23.8%"
+          />
+          <StatCard 
+            icon={DollarSign} 
+            label="Monthly Revenue" 
+            value={`$${(systemStats.monthlyRevenue / 1000).toFixed(0)}K`} 
+            color="from-green-500 to-green-600"
+            trend="+15.3%"
+          />
+          <StatCard 
+            icon={Building2} 
+            label="Hospitals" 
+            value={systemStats.totalHospitals} 
+            color="from-purple-500 to-purple-600"
+            trend="+2"
+          />
+          <StatCard 
+            icon={Brain} 
+            label="AI Predictions" 
+            value={systemStats.aiPredictions.toLocaleString()} 
+            color="from-indigo-500 to-indigo-600"
+            trend="+45%"
+          />
+        </div>
+
+        {/* Critical Metrics Alert */}
+        <Card className="mb-8 border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20">
+          <CardHeader>
+            <CardTitle className="flex items-center text-orange-800 dark:text-orange-200">
+              <AlertTriangle className="mr-2 h-5 w-5" />
+              Critical Metrics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {criticalMetrics.map((metric, index) => (
+                <div key={index} className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">{metric.label}</span>
+                    <span className={`text-xs font-medium ${metric.color}`}>{metric.trend}</span>
+                  </div>
+                  <p className={`text-2xl font-bold ${metric.color}`}>{metric.value}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Dashboard Modules Grid */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">System Modules</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {dashboardModules.map((module) => (
+              <Card 
+                key={module.id}
+                className={`cursor-pointer transition-all duration-200 hover:scale-105 border ${module.borderColor} ${module.bgColor}`}
+                onClick={() => setSelectedModule(module.id)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 rounded-lg bg-gradient-to-r ${module.color}`}>
+                      <module.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <Badge 
+                      variant={module.status === 'warning' ? 'outline' : 'default'}
+                      className={module.status === 'warning' ? 'border-yellow-500 text-yellow-600' : 'bg-green-500'}
+                    >
+                      {module.status}
+                    </Badge>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{module.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{module.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {typeof module.count === 'number' ? module.count.toLocaleString() : module.count}
+                    </span>
+                    <Button size="sm" variant="ghost" className="text-gray-600 dark:text-gray-400">
+                      View →
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Revenue Chart */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-gray-900 dark:text-white">Revenue Analytics</CardTitle>
+            <CardDescription>Monthly revenue breakdown across all streams</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={revenueData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="month" stroke="#6b7280" />
+                <YAxis stroke="#6b7280" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#ffffff', 
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px'
+                  }} 
+                />
+                <Legend />
+                <Bar dataKey="subscriptions" fill="#3b82f6" name="Subscriptions" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="ads" fill="#10b981" name="Ad Revenue" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="donations" fill="#8b5cf6" name="Donations" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-gray-900 dark:text-white">Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Button className="h-auto flex-col p-4 bg-red-500 hover:bg-red-600">
+                <Lock className="mb-2 h-5 w-5" />
+                <span className="text-sm font-medium">Emergency Lock</span>
+              </Button>
+              <Button className="h-auto flex-col p-4 bg-green-500 hover:bg-green-600">
+                <Database className="mb-2 h-5 w-5" />
+                <span className="text-sm font-medium">Backup System</span>
+              </Button>
+              <Button className="h-auto flex-col p-4 bg-blue-500 hover:bg-blue-600">
+                <Terminal className="mb-2 h-5 w-5" />
+                <span className="text-sm font-medium">System Logs</span>
+              </Button>
+              <Button className="h-auto flex-col p-4 bg-purple-500 hover:bg-purple-600">
+                <Settings className="mb-2 h-5 w-5" />
+                <span className="text-sm font-medium">Configuration</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }

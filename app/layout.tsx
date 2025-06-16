@@ -1,13 +1,12 @@
-// app/layout.tsx
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import AuthProvider from '@/contexts/AuthContext'  
+import AuthProvider from '@/contexts/AuthContext'
 import { NotificationProvider } from '@/contexts/NotificationContext'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
@@ -27,15 +26,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider
-          attribute="class"
           defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
         >
           <AuthProvider>
             <NotificationProvider>
               {children}
-              <Toaster />
+              {/* <Toaster /> */}
             </NotificationProvider>
           </AuthProvider>
         </ThemeProvider>

@@ -61,7 +61,13 @@ const countyOptions = [
   'Garissa', 'Kakamega', 'Nyeri', 'Machakos', 'Meru', 'Kericho', 'Embu'
 ];
 
-const hospitalTypes = [
+type HospitalTypeOption = {
+  value: string;
+  label: string;
+  description: string;
+};
+
+const hospitalTypes: HospitalTypeOption[] = [
   { value: 'public', label: 'Public Hospital', description: 'Government-owned facility' },
   { value: 'private', label: 'Private Hospital', description: 'Privately-owned facility' },
   { value: 'christian', label: 'Christian Hospital', description: 'Faith-based facility' },
@@ -95,7 +101,7 @@ export default function HospitalManagementSystem() {
     established: '',
     beds: '',
     description: '',
-    specialties: [],
+    specialties: [] as string[],
     condomsAllowed: true,
     emergencyServices: true,
     prepServices: true,
@@ -105,7 +111,7 @@ export default function HospitalManagementSystem() {
     coordinates: { lat: '', lng: '' },
     licenseNumber: '',
     accreditation: '',
-    insuranceAccepted: []
+    insuranceAccepted: [] as string[]
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -514,12 +520,17 @@ export default function HospitalManagementSystem() {
                   </div>
                   <div>
                     <Label className="text-gray-700">Hospital Type *</Label>
-                    <Select value={newHospital.type} onValueChange={(value) => setNewHospital({...newHospital, type: value})}>
+                    <Select
+                      value={newHospital.type}
+                      onValueChange={(value: string) =>
+                        setNewHospital({ ...newHospital, type: value })
+                      }
+                    >
                       <SelectTrigger className="bg-white border-gray-200">
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent className="bg-white border-gray-200">
-                        {hospitalTypes.map((type) => (
+                        {hospitalTypes.map((type: HospitalTypeOption) => (
                           <SelectItem key={type.value} value={type.value}>
                             {type.label}
                           </SelectItem>
@@ -542,7 +553,7 @@ export default function HospitalManagementSystem() {
                   </div>
                   <div>
                     <Label className="text-gray-700">County *</Label>
-                    <Select value={newHospital.county} onValueChange={(value) => setNewHospital({...newHospital, county: value})}>
+                    <Select value={newHospital.county} onValueChange={(value: string) => setNewHospital({...newHospital, county: value})}>
                       <SelectTrigger className="bg-white border-gray-200">
                         <SelectValue placeholder="Select county" />
                       </SelectTrigger>
