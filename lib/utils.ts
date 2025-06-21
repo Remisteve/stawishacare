@@ -65,7 +65,6 @@ export const appointmentUtils = {
   },
   
   filterAppointments: (appointments: any[], filter: string) => {
-    const now = new Date();
     
     switch (filter) {
       case 'all':

@@ -1,4 +1,5 @@
 // components/LoadingScreen.tsx
+import React from 'react'
 import { Shield } from 'lucide-react'
 
 export default function LoadingScreen() {
@@ -32,7 +33,7 @@ export default function LoadingScreen() {
         </div>
       </div>
       
-      <style jsx>{`
+      <style>{`
         @keyframes loading-bar {
           0% { width: 0%; }
           50% { width: 70%; }

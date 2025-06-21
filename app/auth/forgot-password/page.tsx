@@ -7,10 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
-  Crown, Shield, Mail, ArrowLeft, ArrowRight, AlertTriangle, CheckCircle,
-  Loader2, KeyRound, Lock, ShieldCheck, Fingerprint, Terminal, Code2,
-  Network, Clock, AlertCircle, Send, RefreshCw, BadgeCheck, Zap,
-  FileText, Hash, Cpu, Binary, Database, ChevronRight, Sparkles
+   Shield, Mail, ArrowLeft,  AlertTriangle, CheckCircle,
+  Loader2, KeyRound, Lock, ShieldCheck,
+   Clock, AlertCircle, Send, RefreshCw, BadgeCheck, 
+  Hash, Cpu, Binary, Database, ChevronRight
 } from 'lucide-react';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -264,7 +264,7 @@ export default function SuperAdminForgotPassword() {
                       </div>
                       <div>
                         <p className="text-gray-700 font-medium mb-1">Email Verification</p>
-                        <p>We'll send a secure reset link to your registered email</p>
+                        <p>We&apos;ll send a secure reset link to your registered email</p>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
@@ -485,7 +485,7 @@ export default function SuperAdminForgotPassword() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes float-orb {
           0%, 100% { 
             transform: translateY(0px) translateX(0px) scale(1);

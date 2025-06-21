@@ -385,7 +385,7 @@ export default function SuperAdminLogin() {
         </Card>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes float-particles {
           0%, 100% { 
             transform: translateY(0px) translateX(0px);

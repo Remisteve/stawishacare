@@ -9,9 +9,9 @@ import { Label } from '@/components/ui/label';
 import { 
   Crown, Shield, Mail, Eye, EyeOff, User, Phone, ArrowLeft, ArrowRight,
   AlertTriangle, CheckCircle, Loader2, Lock, Building2, Briefcase,
-  Globe, UserPlus, ShieldCheck, Fingerprint, Binary, Terminal,
-  Network, Database, Key, Layers, Cpu, ChevronRight, Award,
-  FileText, Hash, Code2, Zap, Star, BadgeCheck, Sparkles
+   UserPlus, ShieldCheck, Fingerprint, 
+   Database, Key, Layers,  ChevronRight, 
+   Hash,  BadgeCheck
 } from 'lucide-react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -742,7 +742,7 @@ export default function SuperAdminRegister() {
         </Card>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes float-slow {
           0%, 100% { 
             transform: translateY(0px) translateX(0px) scale(1);

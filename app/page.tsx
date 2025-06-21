@@ -8,22 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Heart, Shield, Users, Calendar, Activity, MessageSquare, Video, CheckCircle, ArrowRight,
   Stethoscope, UserPlus, LogIn, Crown, Sparkles, Star, Building2, Phone, Mail, MapPin,
-  Globe, Target, Clock, Award, BookOpen, AlertTriangle, Info, ChevronRight, Settings,
-  Lock, Menu, X, Loader2, Key, Zap, TrendingUp, HeartHandshake, Pill, FileText, Bell,
-  ChevronDown, Fingerprint, ShieldCheck, Command, Terminal, Cpu, Binary, Code2, Boxes
+  Globe, Target, Clock, Award, BookOpen, AlertTriangle, Info, Settings,
+  Lock, Menu, X, Loader2, Zap, TrendingUp, HeartHandshake, Pill, FileText, 
+  ChevronDown, Fingerprint, ShieldCheck, Command, Terminal, Cpu, Binary, Boxes
 } from 'lucide-react';
-import Image from 'next/image';
 
-// Enhanced custom icons
-const PrEPIcon = () => (
-  <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="4" width="18" height="16" rx="2"/>
-    <path d="M7 8h10"/>
-    <path d="M7 12h10"/>
-    <path d="M7 16h6"/>
-    <circle cx="17" cy="16" r="2" fill="currentColor"/>
-  </svg>
-);
+
 
 const SafetyIcon = () => (
   <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1335,7 +1325,7 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      <style jsx>{`
+      <style>{`
         @keyframes blob {
           0% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
           33% { transform: translate(30px, -50px) scale(1.1) rotate(120deg); }
