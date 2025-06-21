@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { 
   Heart, Shield, Users, Calendar, Activity, MessageSquare, Video, CheckCircle, ArrowRight,
-  Stethoscope, UserPlus, LogIn, Crown, Sparkles, Star, Building2, Phone, Mail, MapPin,
+  Stethoscope, UserPlus, LogIn, Sparkles, Star, Building2, Phone, Mail, MapPin,
   Globe, Target, Clock, Award, BookOpen, AlertTriangle, Info, Settings,
   Lock, Menu, X, Loader2, Zap, TrendingUp, HeartHandshake, Pill, FileText, 
   ChevronDown, Fingerprint, ShieldCheck, Command, Terminal, Cpu, Binary, Boxes
@@ -677,16 +677,6 @@ export default function LandingPage() {
                 <LogIn className="mr-2 h-4 w-4" />
                 Staff Portal
               </Button>
-              {/*
-              <Button 
-                variant="ghost" 
-                className="text-gray-700 hover:text-gray-900 hover:bg-gray-100/80 font-medium" 
-                onClick={() => handleNavigation('/superadmin')}
-              >
-                <Crown className="mr-2 h-4 w-4" />
-                SuperAdmin
-              </Button>
-              */}
               <Button 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 font-semibold" 
                 onClick={() => handleNavigation('/patient-register')}
@@ -694,7 +684,6 @@ export default function LandingPage() {
                 <UserPlus className="mr-2 h-4 w-4" />
                 Get Started Free
               </Button>
-       
             </nav>
 
             {/* Mobile Menu Button */}
@@ -724,17 +713,6 @@ export default function LandingPage() {
                 >
                   <LogIn className="mr-2 h-4 w-4" />
                   Staff Portal
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  className="justify-start text-gray-700 hover:bg-gray-100 font-medium" 
-                  onClick={() => {
-                    handleNavigation('/superadmin');
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  <Crown className="mr-2 h-4 w-4" />
-                  SuperAdmin
                 </Button>
                 <Button 
                   className="justify-start bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold" 
@@ -927,6 +905,156 @@ export default function LandingPage() {
                     <BookOpen className="mr-3 h-5 w-5 group-hover:rotate-12 transition-transform" />
                     Learn More
                   </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Enhanced Partners Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white via-blue-50/20 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <div className="relative inline-block mb-10">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur-2xl opacity-30 animate-pulse"></div>
+              <div className="relative p-5 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full">
+                <Building2 className="h-14 w-14 text-blue-600" />
+              </div>
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+              Our Trusted Partner
+            </h2>
+            <p className="text-xl md:text-2xl lg:text-3xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+              Working together to deliver exceptional HIV prevention services across Kenya
+            </p>
+          </div>
+
+          {/* Partner Spotlight */}
+          <div className="max-w-4xl mx-auto">
+            <Card className="bg-gradient-to-br from-blue-50/90 via-indigo-50/50 to-white border-2 border-blue-200/60 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-500 overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-indigo-700"></div>
+              <CardHeader className="pb-8">
+                <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+                  {/* Logo placeholder */}
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-white rounded-2xl shadow-md group-hover:shadow-lg transition-all duration-300"></div>
+                    <div className="relative bg-white rounded-2xl p-8 border border-gray-100 group-hover:border-gray-200 transition-all duration-300 h-32 w-64 flex items-center justify-center overflow-hidden">
+                      <img 
+                        src="https://raw.githubusercontent.com/Remisteve/prep-software/refs/heads/main/public/images/chap.png" 
+                        alt="CHAP Stawisha Logo"
+                        className="max-w-full max-h-16 object-contain filter group-hover:scale-105 transition-all duration-300"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Partner info */}
+                  <div className="flex-1 text-center md:text-left">
+                    <CardTitle className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                      CHAP Stawisha Project
+                    </CardTitle>
+                    <p className="text-lg font-semibold text-blue-600 mb-4">Christian Health Association of Kenya (CHAK)</p>
+                    <CardDescription className="text-gray-600 text-lg leading-relaxed">
+                      A CDC-funded project supporting HIV/TB/OVC services in faith-based and county health facilities across 15 counties in Kenya
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-8 mb-8">
+                  {/* About CHAK */}
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                      <Award className="h-6 w-6 text-blue-600 mr-2" />
+                      About CHAK
+                    </h4>
+                    <ul className="space-y-3">
+                      {[
+                        "Leading National Faith Based Organization (FBO) established in 1946",
+                        "Promoting access to quality health care",
+                        "Protestant churches' health facilities network",
+                        "Nearly 80 years of healthcare excellence"
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-start space-x-3">
+                          <div className="p-1 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-full shadow-sm mt-0.5">
+                            <CheckCircle className="h-4 w-4 text-white" />
+                          </div>
+                          <span className="text-gray-700">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Project Impact */}
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                      <Target className="h-6 w-6 text-blue-600 mr-2" />
+                      Project Coverage
+                    </h4>
+                    <ul className="space-y-3">
+                      {[
+                        "15 counties across Kenya",
+                        "Offices in Meru, Embu, Kitui and Nairobi",
+                        "Faith-based health facilities",
+                        "County health facilities"
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-start space-x-3">
+                          <div className="p-1 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-full shadow-sm mt-0.5">
+                            <CheckCircle className="h-4 w-4 text-white" />
+                          </div>
+                          <span className="text-gray-700">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Innovation Highlight */}
+                <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl p-6 border border-blue-200">
+                  <h4 className="text-xl font-bold text-gray-900 mb-3 flex items-center">
+                    <Sparkles className="h-6 w-6 text-blue-600 mr-2" />
+                    Innovation Spotlight
+                  </h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    CHAP Stawisha pioneered the innovative "Red Carpet Strategy" - a VIP approach to HIV testing and prevention that encourages men to seek health services through differentiated service delivery.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Partnership Stats */}
+          <div className="mt-16 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-xl opacity-20"></div>
+            <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 md:p-16 text-white overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
+              <div className="relative z-10 text-center">
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+                  Partnership Impact
+                </h3>
+                <p className="text-xl md:text-2xl opacity-95 max-w-3xl mx-auto mb-10">
+                  Together with CHAP Stawisha, we're expanding HIV prevention services nationwide
+                </p>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                  {[
+                    { number: "15", label: "Counties Covered", icon: <MapPin className="h-8 w-8" /> },
+                    { number: "4", label: "Regional Offices", icon: <Building2 className="h-8 w-8" /> },
+                    { number: "1946", label: "CHAK Founded", icon: <Award className="h-8 w-8" /> },
+                    { number: "CDC", label: "Funded Project", icon: <Shield className="h-8 w-8" /> }
+                  ].map((stat, index) => (
+                    <div key={index} className="text-center group">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 mb-4 group-hover:bg-white/30 transition-all duration-300">
+                        <div className="flex justify-center mb-4 text-white/90 group-hover:scale-110 transition-transform">
+                          {stat.icon}
+                        </div>
+                        <div className="text-3xl md:text-4xl font-bold mb-1">{stat.number}</div>
+                        <div className="text-sm md:text-base opacity-90 font-medium">{stat.label}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
