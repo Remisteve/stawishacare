@@ -941,7 +941,7 @@ export default function LandingPage() {
                     <div className="absolute inset-0 bg-white rounded-2xl shadow-md group-hover:shadow-lg transition-all duration-300"></div>
                     <div className="relative bg-white rounded-2xl p-8 border border-gray-100 group-hover:border-gray-200 transition-all duration-300 h-32 w-64 flex items-center justify-center overflow-hidden">
                       <img 
-                        src="https://raw.githubusercontent.com/Remisteve/prep-software/refs/heads/main/public/images/chap.png" 
+                        src="https://raw.githubusercontent.com/Remisteve/prep-software/refs/heads/main/public/chap.png" 
                         alt="CHAP Stawisha Logo"
                         className="max-w-full max-h-16 object-contain filter group-hover:scale-105 transition-all duration-300"
                       />
