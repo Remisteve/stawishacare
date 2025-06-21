@@ -12,6 +12,7 @@ import {
   Lock, Menu, X, Loader2, Key, Zap, TrendingUp, HeartHandshake, Pill, FileText, Bell,
   ChevronDown, Fingerprint, ShieldCheck, Command, Terminal, Cpu, Binary, Code2, Boxes
 } from 'lucide-react';
+import Image from 'next/image';
 
 // Enhanced custom icons
 const PrEPIcon = () => (
@@ -670,7 +671,7 @@ export default function LandingPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  PrEP/PEP Care
+                  HIV Self Test/PrEP & PEP
                 </h1>
                 <p className="text-xs text-gray-500 font-medium">Comprehensive HIV Prevention</p>
               </div>
@@ -686,6 +687,7 @@ export default function LandingPage() {
                 <LogIn className="mr-2 h-4 w-4" />
                 Staff Portal
               </Button>
+              {/*
               <Button 
                 variant="ghost" 
                 className="text-gray-700 hover:text-gray-900 hover:bg-gray-100/80 font-medium" 
@@ -694,6 +696,7 @@ export default function LandingPage() {
                 <Crown className="mr-2 h-4 w-4" />
                 SuperAdmin
               </Button>
+              */}
               <Button 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 font-semibold" 
                 onClick={() => handleNavigation('/patient-register')}
@@ -701,6 +704,7 @@ export default function LandingPage() {
                 <UserPlus className="mr-2 h-4 w-4" />
                 Get Started Free
               </Button>
+       
             </nav>
 
             {/* Mobile Menu Button */}

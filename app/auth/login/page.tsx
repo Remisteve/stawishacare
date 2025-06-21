@@ -1,15 +1,18 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { 
-  Stethoscope,
-  Shield,
-  Lock,
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
   Eye,
   EyeOff,
   Mail,
@@ -17,58 +20,60 @@ import {
   ArrowRight,
   ArrowLeft,
   AlertTriangle,
-  CheckCircle,
   Loader2,
-  Users,
-  Activity,
-  Heart,
-  Building2
-} from 'lucide-react';
+  Crown,
+  Shield,
+  Lock,
+  ShieldCheck,
+  BadgeCheck,
+  Database,
+  Cpu,
+  Network,
+  Sparkles,
+  CheckCircle,
+  Zap,
+  Star
+} from "lucide-react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
-export default function AuthLogin() {
+export default function SuperAdminLogin() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Form state
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [errors, setErrors] = useState({
-    email: '',
-    password: ''
-  });
+  const [animateIn, setAnimateIn] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({ email: "", password: "" });
+
+  useEffect(() => {
+    setAnimateIn(true);
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Clear errors when user starts typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const validateForm = () => {
-    const newErrors = { email: '', password: '' };
+    const newErrors = { email: "", password: "" };
     let isValid = true;
 
-    // Email validation
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Executive email is required";
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = "Enter a valid executive email";
       isValid = false;
     }
 
-    // Password validation
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
       isValid = false;
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
       isValid = false;
     }
 
@@ -76,281 +81,341 @@ export default function AuthLogin() {
     return isValid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSubmit = async () => {
     if (!validateForm()) return;
-
     setIsLoading(true);
 
     try {
-      // Demo authentication - different credentials for different roles
-      setTimeout(() => {
-        if (formData.email === 'admin@hospital1.ke' && formData.password === 'admin123') {
-          router.push('/admin');
-        } else if (formData.email === 'doctor@hospital1.ke' && formData.password === 'doctor123') {
-          router.push('/dashboard/doctor');
-        } else if (formData.email === 'champion@hospital1.ke' && formData.password === 'champion123') {
-          router.push('/dashboard/prep-champion');
-        } else {
-          setErrors({
-            email: '',
-            password: 'Invalid credentials. Please try again.'
-          });
-        }
-        setIsLoading(false);
-      }, 2000);
-    } catch (error) {
-      setErrors({
-        email: '',
-        password: 'Authentication failed. Please try again.'
-      });
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      // Redirect to SuperAdmin Dashboard
+      router.push("/superadmin");
+    } catch (error: any) {
+      let errorMessage = "Login failed. Please verify your credentials.";
+      
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = "Executive account not found";
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = "Invalid password";
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = "Invalid email format";
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = "Too many failed attempts. Please try again later";
+      }
+      
+      setErrors({ email: "", password: errorMessage });
+    } finally {
       setIsLoading(false);
     }
   };
 
-  const handleBackToHome = () => {
-    router.push('/');
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSubmit();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 flex">
-      {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-blue-600 to-teal-600"></div>
-        <div className="absolute inset-0 bg-black/20"></div>
-        
-        {/* Animated background */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center px-6 py-12 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        {/* Subtle animated grid */}
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div 
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px',
+              animation: 'grid-float 25s linear infinite'
+            }}
+          />
+        </div>
+
+        {/* Floating golden particles */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl animate-pulse animation-delay-2000"></div>
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-float-particles"
+              style={{
+                width: Math.random() * 6 + 4 + 'px',
+                height: Math.random() * 6 + 4 + 'px',
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                background: `linear-gradient(45deg, #fbbf24, #f59e0b)`,
+                borderRadius: '50%',
+                animationDelay: `${Math.random() * 15}s`,
+                animationDuration: `${20 + Math.random() * 10}s`,
+                boxShadow: '0 0 10px rgba(251, 191, 36, 0.3)'
+              }}
+            />
+          ))}
         </div>
 
-        <div className="relative z-10 flex flex-col justify-center px-12 py-24 text-white">
-          {/* Brand */}
-          <div className="mb-12">
-            <div className="flex items-center mb-6">
-              <div className="bg-white/20 p-4 rounded-2xl mr-4">
-                <Stethoscope className="h-12 w-12 text-white" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold">Healthcare Portal</h1>
-                <p className="text-xl text-white/90">Staff Access Center</p>
-              </div>
-            </div>
-            <p className="text-lg text-white/80 leading-relaxed">
-              Access your professional dashboard to manage patients, appointments, 
-              and provide comprehensive HIV prevention care.
-            </p>
-          </div>
-
-          {/* Platform Features */}
-          <div className="space-y-6">
-            <h3 className="text-2xl font-bold mb-6 flex items-center">
-              <Activity className="h-6 w-6 mr-3" />
-              Professional Tools
-            </h3>
-            <div className="grid grid-cols-2 gap-6">
-              {[
-                { icon: <Users className="h-6 w-6" />, label: "Patient Management", number: "2,500+" },
-                { icon: <Heart className="h-6 w-6" />, label: "PrEP Services", number: "1,200+" },
-                { icon: <Building2 className="h-6 w-6" />, label: "Partner Facilities", number: "50+" },
-                { icon: <Activity className="h-6 w-6" />, label: "Daily Consultations", number: "150+" }
-              ].map((stat, index) => (
-                <div key={index} className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                  <div className="flex justify-center mb-4 bg-gradient-to-r from-white/20 to-white/10 p-3 rounded-xl w-fit shadow-lg text-white">
-                    {stat.icon}
-                  </div>
-                  <div className="text-2xl font-bold mb-2">{stat.number}</div>
-                  <div className="text-white/80 font-medium text-sm">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Access Info */}
-          <div className="mt-12">
-            <h3 className="text-xl font-semibold mb-6 flex items-center">
-              <Shield className="h-5 w-5 mr-2" />
-              Demo Access
-            </h3>
-            <div className="space-y-3 text-sm">
-              <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 border border-white/20">
-                <div className="font-semibold text-white mb-1">Hospital Admin</div>
-                <div className="text-white/80">admin@hospital1.ke / admin123</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 border border-white/20">
-                <div className="font-semibold text-white mb-1">Doctor</div>
-                <div className="text-white/80">doctor@hospital1.ke / doctor123</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 border border-white/20">
-                <div className="font-semibold text-white mb-1">PrEP Champion</div>
-                <div className="text-white/80">champion@hospital1.ke / champion123</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Large decorative shapes */}
+        <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-200/10 to-purple-200/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-amber-200/10 to-yellow-200/10 rounded-full blur-3xl animate-pulse animation-delay-3000"></div>
       </div>
 
-      {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-md">
-          {/* Back to Home Button */}
-          <Button
-            variant="ghost"
-            className="mb-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            onClick={handleBackToHome}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
-          </Button>
+      <div className={`w-full max-w-lg relative z-10 transition-all duration-1000 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          className="mb-8 text-gray-600 hover:text-gray-900 hover:bg-white/80 backdrop-blur-sm transition-all duration-300 group border border-gray-200/50 shadow-sm"
+          onClick={() => router.push("/")}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+          Back to Home
+        </Button>
 
-          <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-xl">
-            <CardHeader className="text-center pb-8 pt-10">
-              <div className="flex items-center justify-center mb-6">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-blue-600 rounded-full blur-lg opacity-50"></div>
-                  <div className="relative bg-gradient-to-br from-emerald-600 to-blue-600 p-5 rounded-full shadow-2xl">
-                    <Lock className="h-10 w-10 text-white" />
-                  </div>
+        {/* Main Login Card */}
+        <Card className="bg-white/95 backdrop-blur-3xl border border-gray-200/60 shadow-2xl shadow-gray-900/10 overflow-visible relative group hover:shadow-3xl hover:shadow-gray-900/15 transition-all duration-700">
+          {/* Animated border effect */}
+          <div className="absolute -inset-[1px] bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-amber-500/20 rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-all duration-700"></div>
+          
+          {/* Golden Crown - Floating above card */}
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-20">
+            <div className="relative group/crown">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 rounded-3xl blur-2xl opacity-40 animate-pulse group-hover/crown:opacity-60 transition-all duration-500"></div>
+              <div className="relative bg-gradient-to-br from-yellow-400 via-amber-500 to-yellow-600 p-5 rounded-3xl shadow-2xl transform group-hover/crown:scale-110 transition-all duration-500">
+                <Crown className="h-10 w-10 text-white drop-shadow-lg" />
+                {/* Crown jewels effect */}
+                <div className="absolute top-2 left-3 w-1 h-1 bg-white rounded-full animate-ping"></div>
+                <div className="absolute top-3 right-4 w-1 h-1 bg-white rounded-full animate-ping animation-delay-1000"></div>
+                <div className="absolute bottom-4 left-1/2 w-1 h-1 bg-white rounded-full animate-ping animation-delay-2000"></div>
+              </div>
+            </div>
+          </div>
+
+          <CardHeader className="text-center pb-8 pt-20 relative z-10">
+            {/* Main Icon */}
+            <div className="flex items-center justify-center mb-8">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-600 via-blue-700 to-slate-800 rounded-3xl blur-3xl opacity-30 animate-pulse"></div>
+                <div className="relative bg-gradient-to-br from-slate-700 via-blue-800 to-slate-900 p-8 rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-500">
+                  <Shield className="h-16 w-16 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-                Staff Login
-              </CardTitle>
-              <CardDescription className="text-gray-600 text-lg mt-3">
-                Access your professional dashboard
-              </CardDescription>
-            </CardHeader>
+            </div>
 
-            <CardContent className="space-y-6 p-8">
-              {/* Info Notice */}
-              <div className="bg-gradient-to-r from-blue-50 to-emerald-50 rounded-xl p-4 border border-blue-200/50">
-                <div className="flex items-center space-x-2 text-blue-700 mb-2">
-                  <Shield className="h-5 w-5" />
-                  <span className="font-semibold text-sm">Healthcare Professional Access</span>
+            <CardTitle className="text-4xl font-bold text-gray-900 tracking-tight mb-3 relative">
+              <span className="bg-gradient-to-r from-slate-700 via-blue-800 to-slate-900 bg-clip-text text-transparent">
+                EXECUTIVE ACCESS
+              </span>
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+            </CardTitle>
+            <CardDescription className="text-gray-600 text-xl font-light">
+              SuperAdmin Control Center
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-8 px-10 pb-10 relative z-10">
+            {/* Security Banner */}
+            <div className="bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 rounded-2xl p-6 border-2 border-amber-200/50 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-amber-300/20 to-yellow-400/20 rounded-full blur-2xl"></div>
+              <div className="relative flex items-center space-x-3 text-amber-700 mb-3">
+                <div className="p-2 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-xl text-white shadow-lg">
+                  <ShieldCheck className="h-5 w-5" />
                 </div>
-                <p className="text-xs text-blue-600 leading-relaxed">
-                  Use your facility-provided credentials to access the platform
-                </p>
+                <span className="font-bold text-sm uppercase tracking-wide">ULTRA-SECURE ZONE</span>
+                <div className="flex space-x-1">
+                  {[...Array(3)].map((_, i) => (
+                    <Star key={i} className="h-3 w-3 text-amber-500 fill-current" />
+                  ))}
+                </div>
               </div>
+              <p className="text-sm text-amber-700/80 leading-relaxed font-medium">
+                Multi-layered security protocol active. All access attempts are monitored and logged in real-time.
+              </p>
+            </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Email Field */}
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center">
-                    <Mail className="h-4 w-4 mr-2 text-emerald-500" />
-                    Email Address
-                  </Label>
+            {/* Form Fields */}
+            <div className="space-y-6">
+              {/* Email Field */}
+              <div className="space-y-3">
+                <Label htmlFor="email" className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center">
+                  <Mail className="h-4 w-4 mr-2 text-blue-600" />
+                  Executive Email Address
+                </Label>
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-sm group-focus-within:blur-md group-focus-within:opacity-100 opacity-0 transition-all duration-300"></div>
                   <Input
                     id="email"
                     name="email"
                     type="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="Enter your email address"
-                    className="h-12 px-4 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-300 text-base"
+                    onKeyPress={handleKeyPress}
                     disabled={isLoading}
+                    placeholder="executive@prepcare.ke"
+                    className="relative h-14 px-5 bg-white border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder:text-gray-500 font-medium shadow-inner"
+                    autoFocus
                   />
-                  {errors.email && (
-                    <div className="flex items-center space-x-2 text-red-600 text-sm">
-                      <AlertTriangle className="h-4 w-4" />
-                      <span>{errors.email}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Password Field */}
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center">
-                    <KeyRound className="h-4 w-4 mr-2 text-emerald-500" />
-                    Password
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      placeholder="Enter your password"
-                      className="h-12 px-4 pr-12 bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-300 text-base"
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-500 transition-colors"
-                      disabled={isLoading}
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                  </div>
-                  {errors.password && (
-                    <div className="flex items-center space-x-2 text-red-600 text-sm">
-                      <AlertTriangle className="h-4 w-4" />
-                      <span>{errors.password}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Login Button */}
-                <Button
-                  type="submit"
-                  className="w-full h-12 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Authenticating...
-                    </>
-                  ) : (
-                    <>
-                      <Stethoscope className="mr-2 h-5 w-5" />
-                      Access Dashboard
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </>
-                  )}
-                </Button>
-              </form>
-
-              {/* Mobile Demo Credentials */}
-              <div className="lg:hidden mt-6">
-                <div className="text-center text-sm text-gray-600 mb-4 font-semibold">Demo Credentials:</div>
-                <div className="space-y-2 text-xs">
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="font-semibold">Admin:</div>
-                    <div className="text-gray-600">admin@hospital1.ke / admin123</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="font-semibold">Doctor:</div>
-                    <div className="text-gray-600">doctor@hospital1.ke / doctor123</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="font-semibold">PrEP Champion:</div>
-                    <div className="text-gray-600">champion@hospital1.ke / champion123</div>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   </div>
                 </div>
+                {errors.email && (
+                  <div className="flex items-center space-x-2 text-red-600 text-sm animate-in slide-in-from-top-1 bg-red-50 p-3 rounded-lg border border-red-200">
+                    <AlertTriangle className="h-4 w-4" />
+                    <span>{errors.email}</span>
+                  </div>
+                )}
               </div>
 
-              {/* Security Footer */}
-              <div className="text-center pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-500 flex items-center justify-center space-x-2">
-                  <Shield className="h-3 w-3" />
-                  <span>Secure healthcare professional access</span>
-                  <span>•</span>
-                  <span>HIPAA compliant</span>
-                </p>
+              {/* Password Field */}
+              <div className="space-y-3">
+                <Label htmlFor="password" className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center">
+                  <Lock className="h-4 w-4 mr-2 text-blue-600" />
+                  Security Password
+                </Label>
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-sm group-focus-within:blur-md group-focus-within:opacity-100 opacity-0 transition-all duration-300"></div>
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    onKeyPress={handleKeyPress}
+                    disabled={isLoading}
+                    placeholder="••••••••••••••••"
+                    className="relative h-14 px-5 pr-14 bg-white border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-gray-900 placeholder:text-gray-500 font-medium shadow-inner"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors p-1 rounded-lg hover:bg-gray-100"
+                    disabled={isLoading}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <div className="flex items-center space-x-2 text-red-600 text-sm animate-in slide-in-from-top-1 bg-red-50 p-3 rounded-lg border border-red-200">
+                    <AlertTriangle className="h-4 w-4" />
+                    <span>{errors.password}</span>
+                  </div>
+                )}
               </div>
-            </CardContent>
-          </Card>
-        </div>
+
+              {/* Submit Button */}
+              <Button
+                onClick={handleSubmit}
+                className="w-full h-16 bg-gradient-to-r from-slate-700 via-blue-800 to-slate-900 hover:from-slate-800 hover:via-blue-900 hover:to-slate-950 text-white font-bold text-xl shadow-2xl hover:shadow-blue-900/30 transform hover:-translate-y-0.5 transition-all duration-300 tracking-wide group relative overflow-hidden"
+                disabled={isLoading || !formData.email || !formData.password}
+              >
+                {/* Button shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-3 h-6 w-6 animate-spin" />
+                    AUTHENTICATING...
+                  </>
+                ) : (
+                  <>
+                    <Shield className="mr-3 h-6 w-6" />
+                    ACCESS CONTROL PANEL
+                    <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Action Links */}
+            <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+              <button
+                onClick={() => router.push("/superadmin/forgot-password")}
+                className="flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm hover:underline transition-all duration-300 group bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg"
+              >
+                <KeyRound className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform" />
+                Reset Password
+              </button>
+              <button
+                onClick={() => router.push("/superadmin/register")}
+                className="flex items-center text-amber-600 hover:text-amber-800 font-medium text-sm hover:underline transition-all duration-300 group bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-lg"
+              >
+                Request Access
+                <Sparkles className="h-4 w-4 ml-2 group-hover:rotate-12 transition-transform" />
+              </button>
+            </div>
+
+            {/* Security Features Grid */}
+            <div className="bg-gradient-to-r from-gray-50 via-blue-50 to-gray-50 rounded-2xl p-6 border border-gray-200/50">
+              <h4 className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide flex items-center">
+                <BadgeCheck className="h-4 w-4 mr-2 text-blue-600" />
+                Enterprise Security Features
+              </h4>
+              <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
+                {[
+                  { icon: <Database className="h-3 w-3" />, label: "AES-256 Encryption" },
+                  { icon: <Cpu className="h-3 w-3" />, label: "Hardware Security" },
+                  { icon: <Network className="h-3 w-3" />, label: "Zero Trust Network" },
+                  { icon: <Zap className="h-3 w-3" />, label: "Real-time Monitoring" }
+                ].map((feature, i) => (
+                  <div key={i} className="flex items-center space-x-2 p-2 bg-white/50 rounded-lg">
+                    <div className="text-green-600">{feature.icon}</div>
+                    <span className="font-medium">{feature.label}</span>
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse ml-auto"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="text-center pt-6 border-t border-gray-200">
+              <div className="flex items-center justify-center space-x-6 text-xs text-gray-500 font-mono mb-3">
+                <span className="flex items-center bg-gray-100 px-3 py-1 rounded-full">
+                  <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
+                  SSL SECURED
+                </span>
+                <span className="flex items-center bg-gray-100 px-3 py-1 rounded-full">
+                  <Shield className="h-3 w-3 mr-1 text-blue-500" />
+                  ENCRYPTED
+                </span>
+                <span className="flex items-center bg-gray-100 px-3 py-1 rounded-full">
+                  <Crown className="h-3 w-3 mr-1 text-amber-500" />
+                  EXECUTIVE
+                </span>
+              </div>
+              <p className="text-xs text-gray-400">
+                Protected by enterprise-grade security protocols
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <style jsx>{`
+        @keyframes float-particles {
+          0%, 100% { 
+            transform: translateY(0px) translateX(0px);
+            opacity: 0.4;
+          }
+          50% { 
+            transform: translateY(-40px) translateX(30px);
+            opacity: 0.8;
+          }
+        }
+        
+        @keyframes grid-float {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(60px, 60px); }
+        }
+        
+        .animate-float-particles {
+          animation: float-particles ease-in-out infinite;
+        }
+        
+        .animation-delay-1000 {
+          animation-delay: 1s;
+        }
+        
         .animation-delay-2000 {
           animation-delay: 2s;
+        }
+        
+        .animation-delay-3000 {
+          animation-delay: 3s;
         }
       `}</style>
     </div>
