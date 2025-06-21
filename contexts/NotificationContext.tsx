@@ -1,26 +1,26 @@
-"use client"
+'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
-interface Notification {
+export type NotificationType = 'success' | 'error' | 'warning' | 'info';
+
+export interface Notification {
   id: string;
+  type: NotificationType;
   title: string;
-  message: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  timestamp: Date;
-  read: boolean;
+  message?: string;
+  duration?: number;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 interface NotificationContextType {
   notifications: Notification[];
-  unreadCount: number;
-  addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => void;
-  markAsRead: (id: string) => void;
-  markAllAsRead: () => void;
+  addNotification: (notification: Omit<Notification, 'id'>) => void;
   removeNotification: (id: string) => void;
   clearAll: () => void;
-  showToast: (message: string, type?: 'success' | 'error' | 'warning' | 'info') => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -28,115 +28,54 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+  const addNotification = useCallback((notification: Omit<Notification, 'id'>) => {
+    const id = Math.random().toString(36).substr(2, 9);
     const newNotification: Notification = {
       ...notification,
-      id: Math.random().toString(36).substr(2, 9),
-      timestamp: new Date(),
-      read: false
+      id,
+      duration: notification.duration || 5000
     };
 
-    setNotifications(prev => [newNotification, ...prev]);
+    setNotifications(prev => [...prev, newNotification]);
 
-    // Also show as toast
-    showToast(notification.message, notification.type);
-  };
-
-  const markAsRead = (id: string) => {
-    setNotifications(prev =>
-      prev.map(notification =>
-        notification.id === id 
-          ? { ...notification, read: true }
-          : notification
-      )
-    );
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(prev =>
-      prev.map(notification => ({ ...notification, read: true }))
-    );
-  };
-
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
-
-  const clearAll = () => {
-    setNotifications([]);
-  };
-
-  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
-    switch (type) {
-      case 'success':
-        toast.success(message);
-        break;
-      case 'error':
-        toast.error(message);
-        break;
-      case 'warning':
-        toast.warning(message);
-        break;
-      case 'info':
-      default:
-        toast.info(message);
-        break;
-    }
-  };
-
-  // Load notifications from localStorage on mount
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    try {
-      const saved = localStorage.getItem('notifications');
-      if (saved) {
-        const parsedNotifications = JSON.parse(saved).map((n: any) => ({
-          ...n,
-          timestamp: new Date(n.timestamp)
-        }));
-        setNotifications(parsedNotifications);
-      }
-    } catch (error) {
-      console.error('Error loading notifications:', error);
+    // Auto-remove notification after duration
+    if ((newNotification.duration ?? 0) > 0) {
+      setTimeout(() => {
+        removeNotification(id);
+      }, newNotification.duration ?? 0);
     }
   }, []);
 
-  // Save notifications to localStorage whenever they change
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    try {
-      localStorage.setItem('notifications', JSON.stringify(notifications));
-    } catch (error) {
-      console.error('Error saving notifications:', error);
-    }
-  }, [notifications]);
+  const removeNotification = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  }, []);
 
-  const value = {
+  const clearAll = useCallback(() => {
+    setNotifications([]);
+  }, []);
+
+  const value: NotificationContextType = {
     notifications,
-    unreadCount,
     addNotification,
-    markAsRead,
-    markAllAsRead,
     removeNotification,
-    clearAll,
-    showToast
+    clearAll
   };
 
   return (
     <NotificationContext.Provider value={value}>
       {children}
+      {/* You can add a toast/notification display component here */}
     </NotificationContext.Provider>
   );
 }
 
-export function useNotification() {
+export function useNotifications() {
   const context = useContext(NotificationContext);
   if (context === undefined) {
-    throw new Error('useNotification must be used within a NotificationProvider');
+    throw new Error('useNotifications must be used within a NotificationProvider');
   }
   return context;
 }
+
+// Export default for easier importing
+export default NotificationProvider;
