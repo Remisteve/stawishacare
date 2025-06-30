@@ -1,19 +1,19 @@
-import React from 'react';
-import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Staff Login - PrEP/PEP Care',
-  description: 'Healthcare professional login portal for PrEP/PEP care platform',
-};
+'use client'
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="auth-portal">
-      {children}
-    </div>
-  );
+import { ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
+
+interface AuthLayoutProps {
+  children: ReactNode
+}
+
+export default function AuthLayout({ children }: AuthLayoutProps) {
+  const pathname = usePathname()
+  
+  // Since we only have superadmin now, just return children without wrapper
+  console.log('🔥 AUTH LAYOUT - Current path:', pathname)
+  console.log('✅ CLEAN SUPERADMIN ONLY SETUP')
+  
+  return <>{children}</>
 }
