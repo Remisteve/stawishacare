@@ -1,42 +1,41 @@
+'use client';
+
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Shield, 
   Users, 
   UserCheck, 
   Heart, 
   Building2,
-  TrendingUp,
   MapPin,
-  ArrowRightLeft,
-  BarChart3,
   Volume2,
   Bot,
   Smartphone,
-  GraduationCap,
   Ban,
   Download,
   ArrowUp,
   Activity,
   Zap,
   Calendar,
-  FileText,
-  Target,
-  Award,
-  Clock,
-  Eye,
-  ArrowRight,
-  Plus,
+  // Plus, - REMOVED (unused)
   Video,
   UserPlus,
   Globe,
-  PlayCircle,
   Sparkles,
-  Cpu,
-  Wifi
+  // Target, - REMOVED (unused)
+  ArrowRight,
+  BarChart3,
+  // FileText, - REMOVED (unused)
+  X,
+  Grid3X3
 } from 'lucide-react';
 
-export default function EnhancedSuperadminDashboard() {
-  const [activeFilter, setActiveFilter] = useState('all');
+export default function FixedSuperadminDashboard() {
+  const [showModuleWheel, setShowModuleWheel] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingModule, setLoadingModule] = useState('');
+  const router = useRouter();
 
   // Quick Stats Data
   const quickStats = [
@@ -82,7 +81,7 @@ export default function EnhancedSuperadminDashboard() {
     }
   ];
 
-  // Enhanced Dashboard Modules with your exact structure
+  // Enhanced Dashboard Modules with proper routes
   const dashboardModules = [
     {
       title: 'Superadmin Module',
@@ -277,8 +276,7 @@ export default function EnhancedSuperadminDashboard() {
       route: '/superadmin/live-downloads',
       trend: '+35.8%',
       isActive: true,
-      category: 'analytics',
-      isLive: true
+      category: 'analytics'
     },
     {
       title: 'Blocked Users',
@@ -305,114 +303,157 @@ export default function EnhancedSuperadminDashboard() {
       trend: '+11.3%',
       isActive: false,
       category: 'communication'
+    },
+    {
+      title: 'Reports & Analytics',
+      icon: BarChart3,
+      count: '156',
+      description: 'Comprehensive system reports & insights',
+      color: 'from-indigo-600 to-blue-700',
+      bgColor: 'bg-gradient-to-br from-indigo-50 via-blue-100/50 to-indigo-50',
+      borderColor: 'border-indigo-200/50',
+      route: '/superadmin/reports',
+      trend: '+22.4%',
+      isActive: true,
+      category: 'analytics'
+    },
+    {
+      title: 'AI Assistant',
+      icon: Bot,
+      count: 'AI',
+      description: 'Advanced AI-powered system automation',
+      color: 'from-green-400 to-emerald-600',
+      bgColor: 'bg-gradient-to-br from-green-50 via-emerald-100/50 to-green-50',
+      borderColor: 'border-green-200/50',
+      route: '/superadmin/ai',
+      trend: 'Online',
+      isActive: true,
+      category: 'ai',
+      isAI: true
     }
   ];
 
-  // Special AI Module (separate from the main grid)
-  const aiModule = {
-    title: 'AI Assistant',
-    icon: Bot,
-    count: 'Online',
-    description: 'Advanced AI-powered system automation',
-    color: 'from-green-400 to-emerald-600',
-    bgColor: 'bg-gradient-to-br from-green-50 via-emerald-100/50 to-green-50',
-    borderColor: 'border-emerald-300/50',
-    route: '/superadmin/ai',
-    trend: 'Active',
-    isActive: true,
-    category: 'ai'
+  const handleModuleClick = (route: string, moduleName: string) => {
+    setIsLoading(true);
+    setLoadingModule(moduleName);
+    setTimeout(() => {
+      setIsLoading(false);
+      setLoadingModule('');
+      router.push(route);
+    }, 1500); // Quick 1.5 second load
   };
 
-  const categories = [
-    { id: 'all', name: 'All Modules', count: dashboardModules.length },
-    { id: 'admin', name: 'Administration', count: dashboardModules.filter(m => m.category === 'admin').length },
-    { id: 'healthcare', name: 'Healthcare', count: dashboardModules.filter(m => m.category === 'healthcare').length },
-    { id: 'digital', name: 'Digital', count: dashboardModules.filter(m => m.category === 'digital').length },
-    { id: 'analytics', name: 'Analytics', count: dashboardModules.filter(m => m.category === 'analytics').length },
-  ];
-
-  const filteredModules = activeFilter === 'all' ? dashboardModules : dashboardModules.filter(m => m.category === activeFilter);
+  const handleWheelModuleClick = (route: string) => {
+    // Removed unused moduleName parameter
+    setShowModuleWheel(false);
+    router.push(route); // Direct navigation for wheel
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      <div className="px-4 sm:px-6 lg:px-8 py-8">
-        {/* Dashboard Title */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-4xl font-black text-gray-900 mb-3 bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 bg-clip-text text-transparent">
-                PrepGuard Command Center
-              </h1>
-              <p className="text-lg text-gray-600 font-medium">
-                Monitor, manage, and optimize all system operations
-              </p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center">
-                <Plus className="w-5 h-5 mr-2" />
-                Quick Action
-              </button>
-              <button className="bg-white border border-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-all flex items-center">
-                <Eye className="w-5 h-5 mr-2" />
-                Live View
-              </button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 w-full">
+      {/* Fixed jsx to regular style tag */}
+      <style>{`
+        ${dashboardModules.map((_, index) => `
+          @keyframes float-${index} {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+            50% { transform: translate(-50%, -50%) translateY(-${3 + (index % 3)}px); }
+          }
+          
+          @keyframes breathe-${index} {
+            0% { transform: perspective(100px) rotateX(15deg) rotateY(-10deg) scale(1); }
+            100% { transform: perspective(100px) rotateX(15deg) rotateY(-10deg) scale(1.05); }
+          }
+          
+          @keyframes icon-glow-${index} {
+            0%, 100% { filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)); }
+            50% { filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 10px rgba(59, 130, 246, 0.5)); }
+          }
+          
+          @keyframes orbit-glow-${index} {
+            0% { transform: scale(1.5) rotate(0deg); opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { transform: scale(1.5) rotate(360deg); opacity: 0; }
+          }
+        `).join('')}
+        
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3); }
+          50% { box-shadow: 0 6px 20px rgba(34, 197, 94, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.3); }
+        }
+        
+        @keyframes ai-pulse {
+          0% { box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3); }
+          100% { box-shadow: 0 8px 20px rgba(168, 85, 247, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.3); }
+        }
+        
+        @keyframes line-pulse {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 0.6; }
+        }
+        
+        ${Array.from({length: 5}).map((_, i) => `
+          @keyframes particle-float-${i} {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-${10 + (i * 2)}px) translateX(${5 + i}px); }
+            50% { transform: translateY(-${5 + i}px) translateX(-${3 + i}px); }
+            75% { transform: translateY(-${8 + (i * 2)}px) translateX(${3 + i}px); }
+          }
+        `).join('')}
+        
+        @keyframes particle-glow {
+          0% { background: rgba(96, 165, 250, 0.6); transform: scale(1); }
+          100% { background: rgba(147, 197, 253, 0.8); transform: scale(1.2); }
+        }
+      `}</style>
 
-          {/* Category Filters */}
-          <div className="flex items-center space-x-2 mb-8 overflow-x-auto">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveFilter(category.id)}
-                className={`px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all flex items-center space-x-2 ${
-                  activeFilter === category.id
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
-                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <span>{category.name}</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                  activeFilter === category.id ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'
-                }`}>
-                  {category.count}
-                </span>
-              </button>
-            ))}
+      {/* Professional Header with Slate Blue Background */}
+      <div className="w-full px-6 lg:px-8 pt-6 pb-4">
+        <div className="bg-slate-100 rounded-xl border border-slate-200 shadow-sm p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">PrepGuard Command Center</h1>
+              <p className="text-sm text-gray-600">Superadmin Dashboard</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-medium text-gray-900">Welcome, Administrator</p>
+              <p className="text-xs text-gray-500">System Status: Operational</p>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      {/* Main Content */}
+      <div className="w-full px-6 lg:px-8 py-6">
+        {/* Quick Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {quickStats.map((stat, index) => (
-            <div key={index} className={`${stat.bgColor} rounded-3xl border border-white shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 overflow-hidden group`}>
-              <div className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${stat.color} rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                    <stat.icon className="w-8 h-8 text-white" />
+            <div key={index} className={`${stat.bgColor} rounded-2xl border border-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 overflow-hidden group`}>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
+                    <stat.icon className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-right">
-                    <div className={`inline-flex items-center px-3 py-1.5 rounded-xl ${
+                    <div className={`inline-flex items-center px-2 py-1 rounded-lg ${
                       stat.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                     }`}>
                       {stat.trend === 'up' ? (
-                        <ArrowUp className="w-4 h-4 mr-1" />
+                        <ArrowUp className="w-3 h-3 mr-1" />
                       ) : (
-                        <ArrowUp className="w-4 h-4 mr-1 rotate-180" />
+                        <ArrowUp className="w-3 h-3 mr-1 rotate-180" />
                       )}
-                      <span className="text-sm font-bold">{stat.change}</span>
+                      <span className="text-xs font-bold">{stat.change}</span>
                     </div>
                   </div>
                 </div>
                 
                 <div>
-                  <p className="text-sm font-semibold text-gray-600 mb-2">{stat.label}</p>
-                  <p className="text-4xl font-black text-gray-900 mb-2">{stat.value}</p>
-                  <p className="text-sm text-gray-500 font-medium">{stat.description}</p>
+                  <p className="text-xs font-medium text-gray-600 mb-1">{stat.label}</p>
+                  <p className="text-2xl font-black text-gray-900 mb-1">{stat.value}</p>
+                  <p className="text-xs text-gray-500">{stat.description}</p>
                 </div>
 
-                {/* Progress bar */}
-                <div className="mt-6 bg-white/50 rounded-full h-2 overflow-hidden">
+                <div className="mt-4 bg-white/50 rounded-full h-1.5 overflow-hidden">
                   <div className={`h-full bg-gradient-to-r ${stat.color} rounded-full transition-all duration-1000 group-hover:w-full`} 
                        style={{width: '75%'}}></div>
                 </div>
@@ -421,213 +462,52 @@ export default function EnhancedSuperadminDashboard() {
           ))}
         </div>
 
-        {/* Enhanced Live AI Module - Separate Special Card */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <Sparkles className="w-6 h-6 mr-2 text-green-500 animate-spin" />
-            AI Neural Network - Live Processing
-            <span className="ml-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-bounce">LIVE</span>
-          </h2>
-          <div className="relative bg-gradient-to-br from-green-400/10 via-emerald-500/20 to-green-600/10 border-2 border-green-300/30 rounded-3xl p-8 hover:shadow-2xl hover:shadow-green-200/50 transition-all duration-500 cursor-pointer group overflow-hidden">
-            {/* Live Streaming Background Effects */}
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-4 right-4 w-32 h-32 bg-gradient-to-r from-green-400 to-emerald-600 rounded-full blur-3xl animate-pulse"></div>
-              <div className="absolute bottom-4 left-4 w-24 h-24 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full blur-2xl animate-pulse delay-1000"></div>
-              <div className="absolute top-1/2 right-8 w-16 h-16 bg-gradient-to-r from-cyan-400 to-green-500 rounded-full blur-xl animate-pulse delay-500"></div>
-            </div>
-
-            {/* Enhanced Circuit Pattern with Animation */}
-            <div className="absolute inset-0 opacity-10">
-              <svg className="w-full h-full" viewBox="0 0 100 100">
-                <defs>
-                  <pattern id="circuit" patternUnits="userSpaceOnUse" width="20" height="20">
-                    <path d="M0 10 L20 10 M10 0 L10 20" stroke="currentColor" strokeWidth="0.5" fill="none" className="text-green-500"/>
-                    <circle cx="10" cy="10" r="1" fill="currentColor" className="text-green-400 animate-pulse"/>
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#circuit)"/>
-              </svg>
-            </div>
-
-            {/* Live Data Streams */}
-            <div className="absolute top-6 left-6 flex flex-col space-y-2">
-              <div className="flex items-center bg-green-500/20 px-2 py-1 rounded-lg backdrop-blur">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-ping mr-2"></div>
-                <span className="text-xs text-green-700 font-bold">Live Data Stream</span>
-              </div>
-              <div className="flex items-center bg-blue-500/20 px-2 py-1 rounded-lg backdrop-blur">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-ping mr-2"></div>
-                <span className="text-xs text-blue-700 font-bold">Neural Learning</span>
-              </div>
-            </div>
-
-            {/* Enhanced Active Status Indicator */}
-            <div className="absolute top-6 right-6 flex flex-col items-end space-y-2">
-              <div className="flex items-center space-x-2">
-                <div className="relative">
-                  <div className="w-4 h-4 bg-green-500 rounded-full animate-ping absolute"></div>
-                  <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                </div>
-                <span className="text-green-600 text-sm font-bold">Neural Active</span>
-              </div>
-              <div className="text-xs text-gray-600 bg-white/80 px-2 py-1 rounded-lg">
-                Processing: 1,247 requests/sec
-              </div>
-            </div>
-
-            <div className="relative z-10 flex items-center justify-between">
-              {/* Left Side - Enhanced AI Icon and Info */}
-              <div className="flex items-center space-x-6">
-                <div className="relative">
-                  <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-green-200/50 group-hover:scale-110 group-hover:rotate-3 transition-all">
-                    <Bot className="w-12 h-12 text-white animate-pulse" />
-                  </div>
-                  {/* Enhanced Neural Network Lines */}
-                  <div className="absolute inset-0">
-                    <div className="absolute top-2 right-2 w-2 h-2 bg-green-400 rounded-full animate-bounce"></div>
-                    <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce delay-200"></div>
-                    <div className="absolute top-1/2 left-0 w-1 h-1 bg-green-300 rounded-full animate-bounce delay-400"></div>
-                    <div className="absolute top-1/3 right-0 w-1 h-1 bg-cyan-400 rounded-full animate-bounce delay-600"></div>
-                  </div>
-                  {/* Live Processing Ring */}
-                  <div className="absolute inset-0 border-2 border-green-400/30 rounded-3xl animate-spin"></div>
-                </div>
-                
-                <div>
-                  <h3 className="text-3xl font-black text-gray-900 mb-2 flex items-center">
-                    {aiModule.title}
-                    <Cpu className="w-6 h-6 ml-2 text-green-500 animate-pulse" />
-                    <span className="ml-2 text-sm bg-green-100 text-green-700 px-2 py-1 rounded-full animate-pulse">LIVE</span>
-                  </h3>
-                  <p className="text-lg text-gray-600 font-medium mb-3">{aiModule.description}</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center bg-green-100 px-3 py-1.5 rounded-xl">
-                      <Wifi className="w-4 h-4 mr-2 text-green-600 animate-pulse" />
-                      <span className="text-sm font-bold text-green-700">Neural Online</span>
-                    </div>
-                    <div className="flex items-center bg-emerald-100 px-3 py-1.5 rounded-xl">
-                      <Activity className="w-4 h-4 mr-2 text-emerald-600 animate-pulse" />
-                      <span className="text-sm font-bold text-emerald-700">Processing</span>
-                    </div>
-                    <div className="flex items-center bg-blue-100 px-3 py-1.5 rounded-xl">
-                      <Zap className="w-4 h-4 mr-2 text-blue-600 animate-bounce" />
-                      <span className="text-sm font-bold text-blue-700">Learning</span>
-                    </div>
-                    <div className="flex items-center bg-purple-100 px-3 py-1.5 rounded-xl">
-                      <Target className="w-4 h-4 mr-2 text-purple-600 animate-spin" />
-                      <span className="text-sm font-bold text-purple-700">Optimizing</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Side - Enhanced Stats and Action */}
-              <div className="text-right">
-                <div className="mb-6">
-                  <p className="text-5xl font-black text-gray-900 mb-2 flex items-center justify-end">
-                    Online
-                    <div className="ml-3 w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
-                  </p>
-                  <div className="flex items-center justify-end space-x-4 text-green-600 mb-3">
-                    <Zap className="w-5 h-5 mr-1 animate-pulse" />
-                    <span className="text-lg font-bold">Active</span>
-                  </div>
-                  {/* Live Stats */}
-                  <div className="text-sm text-gray-600 space-y-1">
-                    <div className="flex justify-between">
-                      <span>CPU Usage:</span>
-                      <span className="text-green-600 font-bold">87%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Memory:</span>
-                      <span className="text-blue-600 font-bold">12.4GB</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Uptime:</span>
-                      <span className="text-purple-600 font-bold">99.97%</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <button className="bg-gradient-to-r from-green-400 to-emerald-600 text-white py-4 px-8 rounded-2xl font-bold shadow-xl hover:shadow-2xl hover:from-green-500 hover:to-emerald-700 transition-all flex items-center group/btn relative overflow-hidden">
-                  {/* Live Stream Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
-                  <span className="relative flex items-center">
-                    <Sparkles className="w-5 h-5 mr-3 animate-spin" />
-                    <span>Access Live AI</span>
-                    <ArrowRight className="w-5 h-5 ml-3 group-hover/btn:translate-x-1 transition-transform" />
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Enhanced Hover Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-t from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-3xl"></div>
-            
-            {/* Live Data Visualization */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-              <div className="flex items-center space-x-1">
-                <div className="w-1 h-4 bg-green-400 rounded animate-pulse"></div>
-                <div className="w-1 h-6 bg-emerald-400 rounded animate-pulse delay-100"></div>
-                <div className="w-1 h-3 bg-green-500 rounded animate-pulse delay-200"></div>
-                <div className="w-1 h-5 bg-cyan-400 rounded animate-pulse delay-300"></div>
-                <div className="w-1 h-2 bg-green-300 rounded animate-pulse delay-400"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Module Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredModules.map((module, index) => (
+        {/* Dashboard Modules Grid - Clean & Clear */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+          {dashboardModules.map((module, index) => (
             <div
               key={index}
-              className={`relative ${module.bgColor} ${module.borderColor} border-2 rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 cursor-pointer group hover:-translate-y-2 overflow-hidden`}
+              onClick={() => handleModuleClick(module.route, module.title)}
+              className={`relative ${module.bgColor} ${module.borderColor} border-2 rounded-2xl p-5 hover:shadow-xl transition-all duration-500 cursor-pointer group hover:-translate-y-1 overflow-hidden`}
             >
               {/* Active Status */}
               {module.isActive && (
-                <div className="absolute top-6 right-6">
+                <div className="absolute top-4 right-4">
                   <div className="relative">
-                    <div className="w-4 h-4 bg-green-500 rounded-full animate-ping absolute"></div>
-                    <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-ping absolute"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   </div>
                 </div>
               )}
 
-              {/* Live Indicator for Downloads */}
-              {module.isLive && (
-                <div className="absolute top-6 left-6 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse">
-                  LIVE
+              {/* AI Special Indicator */}
+              {module.isAI && (
+                <div className="absolute top-4 left-4 bg-green-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+                  AI
                 </div>
               )}
-
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-5">
-                <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-gradient-to-r from-gray-900 to-gray-700 group-hover:scale-110 transition-transform"></div>
-                <div className="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-gradient-to-r from-gray-900 to-gray-700 group-hover:scale-110 transition-transform"></div>
-              </div>
 
               <div className="relative z-10">
                 {/* Header */}
-                <div className="flex items-start justify-between mb-8">
-                  <div className={`w-18 h-18 bg-gradient-to-br ${module.color} rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all`}>
-                    <module.icon className="w-9 h-9 text-white" />
+                <div className="flex items-start justify-between mb-5">
+                  <div className={`w-14 h-14 bg-gradient-to-br ${module.color} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all`}>
+                    <module.icon className="w-7 h-7 text-white" />
                   </div>
                   <div className="text-right">
-                    <p className="text-3xl font-black text-gray-900 mb-1">{module.count}</p>
+                    <p className="text-2xl font-black text-gray-900 mb-0.5">{module.count}</p>
                     <div className={`flex items-center justify-end ${
                       module.trend.startsWith('+') ? 'text-green-600' : 
                       module.trend.startsWith('-') ? 'text-red-600' : 'text-blue-600'
                     }`}>
                       {module.trend.startsWith('+') || module.trend.startsWith('-') ? (
                         <>
-                          <ArrowUp className={`w-4 h-4 mr-1 ${module.trend.startsWith('-') ? 'rotate-180' : ''}`} />
-                          <span className="text-sm font-bold">{module.trend}</span>
+                          <ArrowUp className={`w-3 h-3 mr-0.5 ${module.trend.startsWith('-') ? 'rotate-180' : ''}`} />
+                          <span className="text-xs font-bold">{module.trend}</span>
                         </>
                       ) : (
                         <>
-                          <Zap className="w-4 h-4 mr-1 animate-pulse" />
-                          <span className="text-sm font-bold">{module.trend}</span>
+                          <Zap className="w-3 h-3 mr-0.5 animate-pulse" />
+                          <span className="text-xs font-bold">{module.trend}</span>
                         </>
                       )}
                     </div>
@@ -636,25 +516,268 @@ export default function EnhancedSuperadminDashboard() {
                 
                 {/* Content */}
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{module.title}</h3>
-                  <p className="text-sm text-gray-600 mb-8 font-medium leading-relaxed">{module.description}</p>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{module.title}</h3>
+                  <p className="text-xs text-gray-600 mb-5 font-medium leading-relaxed">{module.description}</p>
                   
                   {/* Action Button */}
-                  <button className={`relative w-full bg-gradient-to-r ${module.color} text-white py-4 px-6 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center group/btn overflow-hidden`}>
+                  <button className={`relative w-full bg-gradient-to-r ${module.color} text-white py-3 px-4 rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center group/btn overflow-hidden text-sm`}>
                     <span className="relative z-10 flex items-center">
-                      <span>Access Module</span>
-                      <ArrowRight className="w-5 h-5 ml-3 group-hover/btn:translate-x-1 transition-transform" />
+                      {module.isAI ? (
+                        <>
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          <span>Access AI</span>
+                        </>
+                      ) : (
+                        <span>Access Module</span>
+                      )}
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-0.5 transition-transform" />
                     </span>
                     <div className="absolute inset-0 bg-white opacity-0 group-hover/btn:opacity-10 transition-opacity"></div>
                   </button>
                 </div>
               </div>
 
-              {/* Hover Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-3xl"></div>
+              {/* Hover Effect */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl"></div>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Blur Background Overlay - Click to Close */}
+      {showModuleWheel && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[9997]"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowModuleWheel(false);
+          }}
+        />
+      )}
+
+      {/* Professional Smart Spinning Wheel - Centered (NO ROTATION) */}
+      {showModuleWheel && (
+        <div 
+          className="fixed inset-0 flex items-center justify-center z-[9998] pointer-events-none"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowModuleWheel(false);
+          }}
+        >
+          {/* Main Wheel Container - REMOVED ROTATION */}
+          <div 
+            className="relative w-[420px] h-[420px] bg-gradient-to-br from-white/95 via-blue-50/90 to-indigo-50/95 backdrop-blur-xl rounded-full shadow-2xl border-2 border-white/50 flex items-center justify-center overflow-hidden animate-in fade-in zoom-in duration-300 pointer-events-auto"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            
+            {/* Static Background Rings - NO ROTATION */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/10 via-indigo-400/5 to-purple-400/10"></div>
+            <div className="absolute inset-4 rounded-full border-2 border-blue-300/20"></div>
+            <div className="absolute inset-8 rounded-full border border-blue-200/30"></div>
+            <div className="absolute inset-12 rounded-full border border-indigo-200/20"></div>
+            
+            {/* Central Command Hub with Pulse */}
+            <div className="relative w-20 h-20 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 rounded-full flex items-center justify-center shadow-xl z-20 group hover:scale-110 transition-all duration-300">
+              <Shield className="w-10 h-10 text-white group-hover:rotate-12 transition-transform duration-300" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/40 to-purple-400/40 animate-ping"></div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-300/20 to-purple-300/20 animate-pulse"></div>
+            </div>
+            
+            {/* Smart Close Button */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowModuleWheel(false);
+              }}
+              className="absolute top-6 right-6 p-3 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white shadow-lg hover:shadow-xl transition-all duration-300 z-30 group"
+            >
+              <X className="w-5 h-5 text-gray-600 group-hover:rotate-90 transition-transform duration-300" />
+            </button>
+
+            {/* 3D Module Icons with Live Breathing Effect */}
+            {dashboardModules.map((module, index) => {
+              const angle = (index * 360) / dashboardModules.length;
+              const radius = 160;
+              const x = Math.cos((angle - 90) * Math.PI / 180) * radius;
+              const y = Math.sin((angle - 90) * Math.PI / 180) * radius;
+              
+              return (
+                <div
+                  key={index}
+                  className="absolute transform -translate-x-1/2 -translate-y-1/2 group z-10"
+                  style={{
+                    left: `calc(50% + ${x}px)`,
+                    top: `calc(50% + ${y}px)`,
+                    animationDelay: `${index * 0.1}s`,
+                    animation: `float-${index} ${4 + (index % 3)}s ease-in-out infinite`
+                  }}
+                >
+                  <button
+                    className="block p-2 rounded-full transition-all duration-300 hover:scale-125 hover:-translate-y-2"
+                    title={`${module.title} - ${module.description}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleWheelModuleClick(module.route);
+                    }}
+                  >
+                    {/* 3D Module Icon with Breathing Animation */}
+                    <div 
+                      className={`relative w-16 h-16 bg-gradient-to-br ${module.color} rounded-full flex items-center justify-center transition-all duration-500 hover:rotate-12 group-hover:shadow-2xl`}
+                      style={{
+                        boxShadow: `
+                          0 8px 25px -5px rgba(0, 0, 0, 0.3),
+                          0 4px 15px -2px rgba(0, 0, 0, 0.2),
+                          inset 0 2px 4px rgba(255, 255, 255, 0.3),
+                          inset 0 -2px 4px rgba(0, 0, 0, 0.1)
+                        `,
+                        transform: 'perspective(100px) rotateX(15deg) rotateY(-10deg)',
+                        animation: `breathe-${index} ${3 + (index % 2)}s ease-in-out infinite alternate`
+                      }}
+                    >
+                      {/* 3D Icon with Enhanced Effects */}
+                      <module.icon 
+                        className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300 drop-shadow-lg" 
+                        style={{
+                          filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
+                          animation: `icon-glow-${index} ${5 + (index % 3)}s ease-in-out infinite`
+                        }}
+                      />
+                      
+                      {/* 3D Status Indicators with Pulse */}
+                      {module.isActive && (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-gradient-to-br from-green-400 to-green-600 rounded-full border-2 border-white shadow-lg animate-pulse"
+                             style={{
+                               boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
+                               animation: 'pulse-glow 2s ease-in-out infinite'
+                             }}>
+                          <div className="absolute inset-1 bg-green-300 rounded-full animate-ping"></div>
+                        </div>
+                      )}
+                      {module.isAI && (
+                        <div className="absolute -top-2 -right-2 w-5 h-5 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full border-2 border-white shadow-lg"
+                             style={{
+                               boxShadow: '0 4px 12px rgba(168, 85, 247, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
+                               animation: 'ai-pulse 1.5s ease-in-out infinite alternate'
+                             }}>
+                          <Sparkles className="w-2.5 h-2.5 text-white absolute top-1 left-1 animate-spin" />
+                        </div>
+                      )}
+                      
+                      {/* 3D Hover Glow Effect with Animation */}
+                      <div className={`absolute inset-0 bg-gradient-to-r ${module.color} rounded-full opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-300`}
+                           style={{
+                             transform: 'scale(1.5)',
+                             zIndex: -1,
+                             animation: `orbit-glow-${index} ${8 + (index % 4)}s linear infinite`
+                           }}></div>
+                      
+                      {/* 3D Reflection Effect */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-60"
+                           style={{
+                             background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%)'
+                           }}></div>
+                    </div>
+                    
+                    {/* Connection Line to Center with Pulse */}
+                    <div 
+                      className="absolute w-0.5 bg-gradient-to-b from-transparent via-blue-200/40 to-transparent opacity-0 group-hover:opacity-60 transition-opacity duration-500"
+                      style={{
+                        height: `${radius - 60}px`,
+                        top: '50%',
+                        left: '50%',
+                        transformOrigin: 'bottom center',
+                        transform: `translate(-50%, -100%) rotate(${angle + 90}deg)`,
+                        animation: 'line-pulse 3s ease-in-out infinite'
+                      }}
+                    ></div>
+                  </button>
+                </div>
+              );
+            })}
+
+            {/* Enhanced Moving Particle Effects */}
+            <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
+              {Array.from({length: 20}).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-1 h-1 bg-blue-400/60 rounded-full"
+                  style={{
+                    left: `${10 + (i * 4)}%`,
+                    top: `${20 + (i * 3)}%`,
+                    animation: `particle-float-${i % 5} ${3 + (i % 4)}s ease-in-out infinite, particle-glow ${2 + (i % 3)}s ease-in-out infinite alternate`
+                  }}
+                ></div>
+              ))}
+            </div>
+
+            {/* Professional Info Display */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg z-10">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-xs font-medium text-gray-700">
+                  {dashboardModules.length} Modules Active
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Professional Loading Screen with Circular Dot Spinner */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-md z-[10000] flex items-center justify-center">
+          <div className="flex flex-col items-center">
+            {/* Circular Dot Spinner */}
+            <div className="relative w-20 h-20 mb-8">
+              <div className="absolute inset-0 animate-spin">
+                {[...Array(8)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-3 h-3 bg-white rounded-full font-bold"
+                    style={{
+                      top: '2px',
+                      left: '50%',
+                      transform: `translateX(-50%) rotate(${i * 45}deg)`,
+                      transformOrigin: '50% 38px',
+                      opacity: 1 - (i * 0.12),
+                      boxShadow: '0 0 6px rgba(255, 255, 255, 0.3)'
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            {/* Professional Module Name Display */}
+            <div className="text-center">
+              <h3 className="text-blue-500 text-xl font-bold mb-2">
+                Opening {loadingModule}
+              </h3>
+              <p className="text-blue-400 text-base font-semibold">
+                PrepGuard System
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Module Navigator Button - Always on Top */}
+      <div className="fixed bottom-8 right-8 z-[9999]">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShowModuleWheel(!showModuleWheel);
+          }}
+          className={`w-14 h-14 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full shadow-2xl hover:shadow-blue-200/50 hover:scale-110 transition-all duration-300 flex items-center justify-center group ${showModuleWheel ? 'ring-4 ring-blue-300/50 scale-110' : ''}`}
+        >
+          <Grid3X3 className={`w-6 h-6 transition-transform duration-300 ${showModuleWheel ? 'rotate-45 scale-90' : ''}`} />
+        </button>
       </div>
     </div>
   );

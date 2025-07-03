@@ -1,41 +1,69 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Search, 
   Plus, 
   Filter, 
   MoreVertical, 
   Edit, 
-  Trash2, 
   Eye,
   Heart,
   MapPin,
   Phone,
   Mail,
-  Calendar,
   Users,
-  Activity,
   TrendingUp,
   Download,
   RefreshCw,
   CheckCircle,
-  XCircle,
-  Clock,
   Star,
   Award,
   MessageSquare,
-  Target,
-  BookOpen,
-  Handshake
+  BookOpen
 } from 'lucide-react';
+
+interface Champion {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  age: number;
+  gender: string;
+  location: string;
+  community: string;
+  status: 'active' | 'training' | 'inactive';
+  level: 'senior' | 'intermediate' | 'beginner';
+  joinDate: string;
+  clientsReached: number;
+  successfulReferrals: number;
+  trainingCompleted: string[];
+  languages: string[];
+  specialization: string;
+  rating: number;
+  lastActive: string;
+  achievements: string[];
+}
+
+interface Stat {
+  title: string;
+  value: string;
+  change: string;
+  trend: 'up' | 'down';
+  icon: React.ElementType;
+  color: string;
+  bgColor: string;
+}
+
+type StatusType = 'active' | 'training' | 'inactive';
+type LevelType = 'senior' | 'intermediate' | 'beginner';
 
 export default function PrepChampionsManagementPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [selectedFilter, setSelectedFilter] = useState<'all' | StatusType>('all');
 
   // Mock PrEP Champions data
-  const champions = [
+  const champions: Champion[] = [
     {
       id: 1,
       name: 'Catherine Njoki',
@@ -123,7 +151,7 @@ export default function PrepChampionsManagementPage() {
   ];
 
   // Statistics
-  const stats = [
+  const stats: Stat[] = [
     {
       title: 'Total Champions',
       value: '24',
@@ -162,7 +190,7 @@ export default function PrepChampionsManagementPage() {
     }
   ];
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: StatusType): string => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-700 border border-green-200';
       case 'training': return 'bg-blue-100 text-blue-700 border border-blue-200';
@@ -171,7 +199,7 @@ export default function PrepChampionsManagementPage() {
     }
   };
 
-  const getLevelColor = (level) => {
+  const getLevelColor = (level: LevelType): string => {
     switch (level) {
       case 'senior': return 'bg-purple-100 text-purple-700';
       case 'intermediate': return 'bg-yellow-100 text-yellow-700';
@@ -180,13 +208,55 @@ export default function PrepChampionsManagementPage() {
     }
   };
 
-  const filteredChampions = champions.filter(champion => {
-    const matchesSearch = champion.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         champion.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         champion.community.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = selectedFilter === 'all' || champion.status === selectedFilter;
-    return matchesSearch && matchesFilter;
-  });
+  const filteredChampions = useMemo(() => {
+    return champions.filter(champion => {
+      const matchesSearch = champion.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           champion.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           champion.community.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFilter = selectedFilter === 'all' || champion.status === selectedFilter;
+      return matchesSearch && matchesFilter;
+    });
+  }, [searchTerm, selectedFilter, champions]);
+
+  const handleExport = () => {
+    console.log('Exporting champions data...');
+    // In a real app, this would trigger data export functionality
+  };
+
+  const handleSync = () => {
+    console.log('Syncing champions data...');
+    // In a real app, this would trigger data synchronization
+  };
+
+  const handleAddChampion = () => {
+    console.log('Opening add champion modal...');
+    // In a real app, this would open a modal or navigate to add champion page
+  };
+
+  const handleViewChampion = (champion: Champion) => {
+    console.log('Viewing champion:', champion.name);
+    // In a real app, this would open champion details modal or navigate to champion page
+  };
+
+  const handleContactChampion = (champion: Champion) => {
+    console.log('Contacting champion:', champion.name);
+    // In a real app, this would open contact modal or start communication
+  };
+
+  const handleEditChampion = (champion: Champion) => {
+    console.log('Editing champion:', champion.name);
+    // In a real app, this would open edit modal or navigate to edit page
+  };
+
+  const handleMoreActions = (champion: Champion) => {
+    console.log('More actions for champion:', champion.name);
+    // In a real app, this would show dropdown menu with additional actions
+  };
+
+  const handleRecruitFirstChampion = () => {
+    console.log('Recruiting first champion...');
+    // In a real app, this would open add champion modal
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
@@ -199,15 +269,30 @@ export default function PrepChampionsManagementPage() {
               <p className="text-gray-600">Manage community health advocates and peer educators</p>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl font-medium hover:bg-gray-50 transition-all flex items-center">
+              <button 
+                type="button"
+                onClick={handleExport}
+                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl font-medium hover:bg-gray-50 transition-all flex items-center"
+                aria-label="Export champions data"
+              >
                 <Download className="w-4 h-4 mr-2" />
                 Export
               </button>
-              <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl font-medium hover:bg-gray-50 transition-all flex items-center">
+              <button 
+                type="button"
+                onClick={handleSync}
+                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl font-medium hover:bg-gray-50 transition-all flex items-center"
+                aria-label="Sync champions data"
+              >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Sync
               </button>
-              <button className="bg-gradient-to-r from-pink-600 to-rose-600 text-white px-6 py-2 rounded-xl font-semibold hover:from-pink-700 hover:to-rose-700 transition-all flex items-center shadow-lg">
+              <button 
+                type="button"
+                onClick={handleAddChampion}
+                className="bg-gradient-to-r from-pink-600 to-rose-600 text-white px-6 py-2 rounded-xl font-semibold hover:from-pink-700 hover:to-rose-700 transition-all flex items-center shadow-lg"
+                aria-label="Add new champion"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Champion
               </button>
@@ -222,12 +307,12 @@ export default function PrepChampionsManagementPage() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                    <stat.icon className="w-6 h-6 text-white" />
+                    <stat.icon className="w-6 h-6 text-white" aria-hidden="true" />
                   </div>
                   <div className={`flex items-center px-2 py-1 rounded-lg ${
                     stat.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                   }`}>
-                    <TrendingUp className={`w-3 h-3 mr-1 ${stat.trend === 'down' ? 'rotate-180' : ''}`} />
+                    <TrendingUp className={`w-3 h-3 mr-1 ${stat.trend === 'down' ? 'rotate-180' : ''}`} aria-hidden="true" />
                     <span className="text-xs font-bold">{stat.change}</span>
                   </div>
                 </div>
@@ -245,24 +330,26 @@ export default function PrepChampionsManagementPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <div className="flex-1 max-w-md">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" aria-hidden="true" />
                 <input
                   type="text"
                   placeholder="Search by name, email, or community..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                  aria-label="Search champions"
                 />
               </div>
             </div>
             
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <Filter className="w-4 h-4 text-gray-500" />
+                <Filter className="w-4 h-4 text-gray-500" aria-hidden="true" />
                 <select
                   value={selectedFilter}
-                  onChange={(e) => setSelectedFilter(e.target.value)}
+                  onChange={(e) => setSelectedFilter(e.target.value as 'all' | StatusType)}
                   className="border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  aria-label="Filter champions by status"
                 >
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
@@ -292,7 +379,7 @@ export default function PrepChampionsManagementPage() {
                       <h3 className="text-lg font-bold text-gray-900 mb-1">{champion.name}</h3>
                       <p className="text-sm text-gray-600 mb-2">{champion.specialization}</p>
                       <div className="flex items-center space-x-2">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" aria-hidden="true" />
                         <span className="text-sm font-medium text-gray-700">{champion.rating}</span>
                         <span className="text-xs text-gray-500">({champion.clientsReached} clients)</span>
                       </div>
@@ -303,7 +390,12 @@ export default function PrepChampionsManagementPage() {
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(champion.status)}`}>
                       {champion.status.charAt(0).toUpperCase() + champion.status.slice(1)}
                     </span>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <button 
+                      type="button"
+                      onClick={() => handleMoreActions(champion)}
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                      aria-label={`More actions for ${champion.name}`}
+                    >
                       <MoreVertical className="w-4 h-4 text-gray-500" />
                     </button>
                   </div>
@@ -312,15 +404,15 @@ export default function PrepChampionsManagementPage() {
                 {/* Contact & Location Info */}
                 <div className="space-y-2">
                   <div className="flex items-center text-sm text-gray-600">
-                    <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                    <Mail className="w-4 h-4 mr-2 text-gray-400" aria-hidden="true" />
                     <span>{champion.email}</span>
                   </div>
                   <div className="flex items-center text-sm text-gray-600">
-                    <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                    <Phone className="w-4 h-4 mr-2 text-gray-400" aria-hidden="true" />
                     <span>{champion.phone}</span>
                   </div>
                   <div className="flex items-center text-sm text-gray-600">
-                    <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+                    <MapPin className="w-4 h-4 mr-2 text-gray-400" aria-hidden="true" />
                     <span>{champion.community}, {champion.location}</span>
                   </div>
                 </div>
@@ -367,6 +459,7 @@ export default function PrepChampionsManagementPage() {
                     <div 
                       className="bg-gradient-to-r from-pink-500 to-rose-600 h-2 rounded-full transition-all duration-1000"
                       style={{ width: `${(champion.trainingCompleted.length / 4) * 100}%` }}
+                      aria-hidden="true"
                     ></div>
                   </div>
                   <p className="text-xs text-gray-500">{champion.trainingCompleted.length}/4 modules completed</p>
@@ -379,7 +472,7 @@ export default function PrepChampionsManagementPage() {
                     <div className="space-y-1">
                       {champion.achievements.slice(0, 2).map((achievement, index) => (
                         <div key={index} className="flex items-center text-xs text-gray-600">
-                          <Award className="w-3 h-3 mr-2 text-yellow-500" />
+                          <Award className="w-3 h-3 mr-2 text-yellow-500" aria-hidden="true" />
                           <span>{achievement}</span>
                         </div>
                       ))}
@@ -394,15 +487,30 @@ export default function PrepChampionsManagementPage() {
 
                 {/* Action Buttons */}
                 <div className="flex items-center space-x-2">
-                  <button className="flex-1 bg-pink-50 text-pink-600 py-2 px-3 rounded-lg font-medium hover:bg-pink-100 transition-colors flex items-center justify-center">
+                  <button 
+                    type="button"
+                    onClick={() => handleViewChampion(champion)}
+                    className="flex-1 bg-pink-50 text-pink-600 py-2 px-3 rounded-lg font-medium hover:bg-pink-100 transition-colors flex items-center justify-center"
+                    aria-label={`View ${champion.name} details`}
+                  >
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </button>
-                  <button className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded-lg font-medium hover:bg-blue-100 transition-colors flex items-center justify-center">
+                  <button 
+                    type="button"
+                    onClick={() => handleContactChampion(champion)}
+                    className="flex-1 bg-blue-50 text-blue-600 py-2 px-3 rounded-lg font-medium hover:bg-blue-100 transition-colors flex items-center justify-center"
+                    aria-label={`Contact ${champion.name}`}
+                  >
                     <MessageSquare className="w-4 h-4 mr-1" />
                     Contact
                   </button>
-                  <button className="bg-gray-50 text-gray-600 py-2 px-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                  <button 
+                    type="button"
+                    onClick={() => handleEditChampion(champion)}
+                    className="bg-gray-50 text-gray-600 py-2 px-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                    aria-label={`Edit ${champion.name}`}
+                  >
                     <Edit className="w-4 h-4" />
                   </button>
                 </div>
@@ -415,11 +523,16 @@ export default function PrepChampionsManagementPage() {
         {filteredChampions.length === 0 && (
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center">
             <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Heart className="w-8 h-8 text-gray-400" />
+              <Heart className="w-8 h-8 text-gray-400" aria-hidden="true" />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No champions found</h3>
             <p className="text-gray-600 mb-6">Try adjusting your search or filter criteria</p>
-            <button className="bg-gradient-to-r from-pink-600 to-rose-600 text-white px-6 py-2 rounded-xl font-semibold hover:from-pink-700 hover:to-rose-700 transition-all">
+            <button 
+              type="button"
+              onClick={handleRecruitFirstChampion}
+              className="bg-gradient-to-r from-pink-600 to-rose-600 text-white px-6 py-2 rounded-xl font-semibold hover:from-pink-700 hover:to-rose-700 transition-all"
+              aria-label="Recruit your first champion"
+            >
               Recruit First Champion
             </button>
           </div>

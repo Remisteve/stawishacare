@@ -12,7 +12,6 @@ import {
   Info,
   Brain,
   Shield,
-  Award,
   Users,
   Activity
 } from 'lucide-react'
@@ -22,7 +21,7 @@ export default function Services() {
 
   const userTypes = [
     {
-      title: "Patients & Individuals",
+      title: "Clients & Individuals",
       subtitle: "Your health, your control, your future",
       description: "Join Kenya's largest HIV prevention network with comprehensive support services",
       icon: <Heart className="h-10 w-10" />,
@@ -135,10 +134,7 @@ export default function Services() {
                 <Users className="h-4 w-4 text-emerald-600" />
                 <span className="text-emerald-800 font-medium text-sm">10,000+ Users</span>
               </div>
-              <div className="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200/50">
-                <Award className="h-4 w-4 text-blue-600" />
-                <span className="text-blue-800 font-medium text-sm">WHO Certified</span>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -206,8 +202,8 @@ export default function Services() {
             </div>
             <p className="text-base text-gray-700 leading-relaxed">
               Your account is created by system administrators for security and compliance. 
-              <span className="font-semibold text-orange-700"> Doctors can register patients directly</span> from their clinical dashboard. 
-              Contact your facility administrator for login credentials and system access.
+              <span className="font-semibold text-orange-700"> Health care workers can register patients directly</span> from their clinical dashboard. 
+             
             </p>
           </div>
         </div>

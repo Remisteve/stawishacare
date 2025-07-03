@@ -21,10 +21,10 @@ export default function Header() {
 
   const navigation = [
     { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
     { name: 'Services', href: '#services' },
     { name: 'Education', href: '#education' },
     { name: 'Contact', href: '#contact' },
+
   ]
 
   const openAuthModal = (mode: 'login' | 'register') => {
@@ -46,6 +46,7 @@ export default function Header() {
     <>
       {/* Professional Emergency Contact Bar */}
       <div className="bg-red-600 text-white py-3 px-4">
+
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center space-x-6 text-sm">
             <div className="flex items-center space-x-2">
@@ -79,7 +80,7 @@ export default function Header() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-blue-600 group-hover:text-blue-700 transition-colors duration-300">
-                  PrepGuard
+                  StawishaCare
                 </h1>
                 <p className="text-xs text-gray-600 font-semibold">HIV Prevention Platform</p>
               </div>

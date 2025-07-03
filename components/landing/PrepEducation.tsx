@@ -5,11 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
-  Info, 
   Users, 
-  Clock, 
   MapPin, 
-  Target,
   BookOpen,
   CheckCircle,
   ChevronDown,
@@ -17,17 +14,12 @@ import {
   ArrowRight,
   Syringe,
   Award,
-  Heart,
-  Activity,
-  Brain,
   Calendar,
   Shield,
   Star,
   Zap,
   Sparkles,
-  Clock3,
-  TrendingUp,
-  Globe
+  TrendingUp
 } from 'lucide-react'
 
 export default function PrepEducation() {
@@ -69,7 +61,7 @@ export default function PrepEducation() {
         "Maintains steady protective drug levels",
         "Private and discreet option",
         "WHO approved since 2022",
-        "Available at select PrepGuard facilities"
+        "Available at select StawishaCare facilities"
       ],
       color: "border-emerald-300/60 bg-gradient-to-br from-emerald-50/95 via-teal-50/60 to-white",
       gradient: "from-emerald-600 to-teal-700",
@@ -177,17 +169,14 @@ export default function PrepEducation() {
       icon: <MapPin className="h-8 w-8" />,
       description: "Multiple locations for free PrEP services",
       details: [
-        "Government health facilities - County hospitals and health centers with PEPFAR support",
-        "PrepGuard network of 50+ certified facilities across Kenya",
+        "Government health facilities/County hospitals and health centers (Level one to five)",
+    
         "Private healthcare providers and specialized HIV prevention clinics",
         "Faith-based health organizations through CHAP Stawisha partnership",
-        "Mission hospitals and Christian Health Association facilities",
-        "Mobile clinics serving remote and hard-to-reach rural communities",
-        "Community health centers and NGO-supported clinics",
-        "University health centers for students and young adults",
+        "Christian Health Association Member Health facilities",
+        "University/tertiary/college health centers for students and young adults",
         "Telemedicine consultations for initial counseling and follow-up",
-        "Workplace health programs and employee wellness centers",
-        "Youth-friendly health services with specialized counselors"
+        "Youth-friendly health safe spaces with specialized counselors"
       ],
       gradient: "from-amber-600 to-orange-600",
       color: "border-amber-200/60 bg-gradient-to-br from-amber-50/95 via-orange-50/70 to-white hover:border-amber-300/80"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -21,8 +21,12 @@ import {
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [secretSequence, setSecretSequence] = useState('')
+  const [typedSequence, setTypedSequence] = useState('')
+  const [lastKeyTime, setLastKeyTime] = useState(0)
   const router = useRouter()
+
+  const secretKeys = ['remi', 'chak', 'jb', 'robert', 'superadmin']
+  const SEQUENCE_TIMEOUT = 2000 // Reset sequence after 2 seconds of inactivity
 
   useEffect(() => {
     setIsVisible(true)
@@ -34,46 +38,81 @@ export default function Hero() {
     return () => clearInterval(timer)
   }, [])
 
-  // Secret key sequence detection for superadmin access - DIRECT REDIRECT
-  useEffect(() => {
-    const secretKeys = ['remi', 'chak', 'jb', 'robert', 'superadmin']
+  // Improved secret key detection
+  const handleSecretKeyDetection = useCallback((key: string) => {
+    const now = Date.now()
+    const timeSinceLastKey = now - lastKeyTime
+
+    // Reset sequence if too much time has passed
+    const newSequence = timeSinceLastKey > SEQUENCE_TIMEOUT ? key : typedSequence + key
     
-    const handleKeyPress = (event: KeyboardEvent) => {
-      const newSequence = secretSequence + event.key.toLowerCase()
-      
-      console.log('🔑 Typed:', event.key, 'Sequence:', newSequence) // Debug
-      
-      // Check if any secret key matches
-      const matchingKey = secretKeys.find(key => key.startsWith(newSequence))
-      
-      if (matchingKey) {
-        setSecretSequence(newSequence)
-        
-        // If we have a complete match, redirect directly to superadmin login
-        if (secretKeys.includes(newSequence)) {
-          console.log('🎯 Secret key matched! Redirecting to superadmin login...')
-          setSecretSequence('')
-          window.location.href = '/auth/superadmin/login'
-          return
-        }
-      } else {
-        setSecretSequence('')
+    setLastKeyTime(now)
+    
+    console.log('🔑 Key pressed:', key, '| Current sequence:', newSequence)
+    
+    // Check for exact matches first
+    const exactMatch = secretKeys.find(secretKey => secretKey === newSequence)
+    if (exactMatch) {
+      console.log('✅ Exact match found:', exactMatch, '| Redirecting...')
+      setTypedSequence('')
+      router.push('/auth/superadmin/login')
+      return
+    }
+    
+    // Check if sequence is a prefix of any secret key
+    const hasValidPrefix = secretKeys.some(secretKey => secretKey.startsWith(newSequence))
+    
+    if (hasValidPrefix) {
+      setTypedSequence(newSequence)
+      console.log('🔄 Valid prefix, continuing...')
+    } else {
+      // No valid prefix, reset sequence
+      setTypedSequence('')
+      console.log('❌ No valid prefix, resetting sequence')
+    }
+  }, [typedSequence, lastKeyTime, router])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Only process alphanumeric keys
+      if (event.key.match(/^[a-zA-Z0-9]$/)) {
+        event.preventDefault() // Prevent default behavior
+        handleSecretKeyDetection(event.key.toLowerCase())
       }
     }
 
-    window.addEventListener('keypress', handleKeyPress)
-    return () => window.removeEventListener('keypress', handleKeyPress)
-  }, [secretSequence, router])
+    // Add event listener to document to capture all keystrokes
+    document.addEventListener('keydown', handleKeyDown, { passive: false })
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleSecretKeyDetection])
+
+  // Auto-reset sequence after timeout
+  useEffect(() => {
+    if (typedSequence && lastKeyTime) {
+      const timeoutId = setTimeout(() => {
+        const timeSinceLastKey = Date.now() - lastKeyTime
+        if (timeSinceLastKey >= SEQUENCE_TIMEOUT) {
+          setTypedSequence('')
+          console.log('⏰ Sequence timeout, resetting...')
+        }
+      }, SEQUENCE_TIMEOUT + 100)
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [typedSequence, lastKeyTime])
 
   const heroSlides = [
     {
-      title: "Revolutionary HIV Prevention",
+      title: "HIV Prevention",
       subtitle: "Advanced PrEP & Injectable Solutions",
       description: "Leading Kenya's transformation in HIV prevention through innovative oral PrEP and breakthrough long-acting injectable technology",
       highlight: "99% Effective Protection"
     },
     {
-      title: "Comprehensive Care Network",
+      title: "StawishaCare Network",
       subtitle: "50+ Partner Facilities Nationwide", 
       description: "Connecting communities with quality healthcare through our extensive network of trusted medical partners across 15 counties",
       highlight: "15 Counties Covered"
@@ -81,7 +120,7 @@ export default function Hero() {
     {
       title: "Empowering Communities",
       subtitle: "10,000+ Lives Protected",
-      description: "Building healthier futures through education, prevention, and comprehensive support services for all Kenyans",
+      description: "Building healthier futures through HIV Self Test education, HIV prevention, and comprehensive support services for all Men and Young People",
       highlight: "24/7 Support Available"
     }
   ]
@@ -108,11 +147,16 @@ export default function Hero() {
         <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-300/30 rounded-full blur-3xl animate-float animation-delay-4000"></div>
       </div>
 
-      {/* Secret Access Hint */}
-      <div className="fixed bottom-4 right-4 bg-amber-500/20 backdrop-blur-sm px-3 py-2 rounded-lg border border-amber-300 z-10">
+      {/* Secret Access Hint - Enhanced */}
+      <div className="fixed bottom-4 right-4 bg-amber-500/20 backdrop-blur-sm px-4 py-3 rounded-lg border border-amber-300 z-10">
         <p className="text-xs text-amber-700 font-medium">
           🔑 Type secret key for superadmin access
         </p>
+        {typedSequence && (
+          <p className="text-xs text-amber-600 mt-1 font-mono">
+            Typed: {typedSequence}
+          </p>
+        )}
       </div>
 
       {/* Main Content */}
@@ -123,11 +167,11 @@ export default function Hero() {
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             <Badge className="bg-blue-500 text-white px-6 py-2 border border-blue-400 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-sm font-bold">
               <Globe className="mr-2 h-4 w-4" />
-              UN Partnership Initiative
+              CHAK Initiative
             </Badge>
             <Badge className="bg-emerald-500 text-white px-6 py-2 border border-emerald-400 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-sm font-bold">
               <Award className="mr-2 h-4 w-4" />
-              WHO Approved Methods
+              PREP/HIV Self Test
             </Badge>
             <Badge className="bg-purple-500 text-white px-6 py-2 border border-purple-400 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-sm font-bold">
               <Syringe className="mr-2 h-4 w-4" />
@@ -177,11 +221,10 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* CTA buttons - FIXED */}
+          {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
             <Button 
               onClick={() => {
-                // Show coming soon message instead of broken redirect
                 alert('Patient portal coming soon! Type "remi" for admin access.')
               }}
               className="group bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-base font-semibold rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
@@ -228,31 +271,39 @@ export default function Hero() {
           </div>
 
           {/* Partner section */}
-          <div className="mt-16 pt-16 border-t border-slate-300">
-            <p className="text-slate-500 mb-8 text-base font-medium">In Partnership With Leading Health Organizations</p>
-            <div className="flex items-center justify-center space-x-8 opacity-80">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold text-xs">CHAP</span>
-                </div>
-                <div className="text-lg font-bold text-slate-600">CHAP STAWISHA</div>
-              </div>
-              <div className="w-px h-8 bg-slate-400"></div>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold text-xs">MOH</span>
-                </div>
-                <div className="text-lg font-bold text-slate-600">MINISTRY OF HEALTH</div>
-              </div>
-              <div className="w-px h-8 bg-slate-400"></div>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center shadow-md">
-                  <span className="text-white font-bold text-xs">CDC</span>
-                </div>
-                <div className="text-lg font-bold text-slate-600">CDC KENYA</div>
-              </div>
-            </div>
-          </div>
+          
+<div className="mt-16 pt-16 border-t border-slate-300">
+  <p className="text-slate-500 mb-8 text-base font-medium">In Partnership With Leading Health Organizations</p>
+  <div className="flex items-center justify-center space-x-8 opacity-80">
+    <div className="flex items-center space-x-3">
+      <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
+        <span className="text-white font-bold text-xs">CHAP</span>
+      </div>
+      <div className="text-lg font-bold text-slate-600">CHAP STAWISHA</div>
+    </div>
+    <div className="w-px h-8 bg-slate-400"></div>
+    <div className="flex items-center space-x-3">
+      <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center shadow-md">
+        <span className="text-white font-bold text-xs">MOH</span>
+      </div>
+      <div className="text-lg font-bold text-slate-600">MINISTRY OF HEALTH</div>
+    </div>
+    <div className="w-px h-8 bg-slate-400"></div>
+    <div className="flex items-center space-x-3">
+      <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center shadow-md">
+        <span className="text-white font-bold text-xs">CDC</span>
+      </div>
+      <div className="text-lg font-bold text-slate-600">CDC KENYA</div>
+    </div>
+    <div className="w-px h-8 bg-slate-400"></div>
+    <div className="flex items-center space-x-3">
+      <div className="w-10 h-10 bg-blue-800 rounded-lg flex items-center justify-center shadow-md">
+        <span className="text-white font-bold text-xs">CHAK</span>
+      </div>
+      <div className="text-lg font-bold text-slate-600">CHAK</div>
+    </div>
+  </div>
+</div>
 
           {/* Slide indicators */}
           <div className="flex justify-center space-x-2 mt-12">

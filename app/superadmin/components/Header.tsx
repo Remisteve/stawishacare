@@ -39,7 +39,7 @@ export default function EnhancedSuperadminHeader() {
                 <Shield className="w-7 h-7 text-white" />
               </div>
               <div className="ml-4">
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 bg-clip-text text-transparent">PrepGuard</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 bg-clip-text text-transparent">StawishaCare</span>
                 <div className="text-xs text-gray-500 font-medium">Super Admin Portal</div>
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function EnhancedSuperadminHeader() {
                       <div>
                         <p className="text-sm font-bold text-gray-900">Super Administrator</p>
                         <p className="text-xs text-gray-500">superadmin@prepguard.com</p>
-                        <p className="text-xs text-green-600 font-medium mt-1">System Owner</p>
+                        <p className="text-xs text-green-600 font-medium mt-1">Master Account</p>
                       </div>
                     </div>
                   </div>

@@ -12,26 +12,22 @@ import {
   Calendar,
   Clock,
   MapPin,
-  Users,
-  Activity,
+  // Removed unused imports: Users, Activity, User, Building2, FileText
   TrendingUp,
   Download,
   RefreshCw,
   CheckCircle,
   XCircle,
   AlertTriangle,
-  User,
   Stethoscope,
-  Building2,
   Phone,
-  Video,
-  FileText
+  Video
 } from 'lucide-react';
 
 export default function AppointmentsManagementPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [selectedView, setSelectedView] = useState('list'); // list, calendar
+  // Removed unused state variables: selectedView, setSelectedView
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   // Mock appointments data
@@ -158,7 +154,7 @@ export default function AppointmentsManagementPage() {
     }
   ];
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'scheduled': return 'bg-blue-100 text-blue-700 border border-blue-200';
       case 'confirmed': return 'bg-green-100 text-green-700 border border-green-200';
@@ -169,7 +165,7 @@ export default function AppointmentsManagementPage() {
     }
   };
 
-  const getTypeColor = (type) => {
+  const getTypeColor = (type: string) => {
     switch (type) {
       case 'consultation': return 'bg-blue-100 text-blue-700';
       case 'screening': return 'bg-purple-100 text-purple-700';
@@ -179,7 +175,7 @@ export default function AppointmentsManagementPage() {
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'bg-red-100 text-red-700';
       case 'medium': return 'bg-yellow-100 text-yellow-700';

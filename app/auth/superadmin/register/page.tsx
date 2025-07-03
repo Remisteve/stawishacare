@@ -98,7 +98,7 @@ export default function SuperadminRegisterPage() {
       setSuccess(true)
       // Redirect to login instead of dashboard (better flow)
       setTimeout(() => router.push('/auth/superadmin/login'), 3000)
-    } catch (err) {
+    } catch {
       setError('Registration failed. Please try again.')
     } finally {
       setLoading(false)
@@ -112,7 +112,7 @@ export default function SuperadminRegisterPage() {
       await new Promise(resolve => setTimeout(resolve, 3000))
       setSuccess(true)
       setTimeout(() => router.push('/auth/superadmin/login'), 3000)
-    } catch (err) {
+    } catch {
       setError('Google registration failed')
     } finally {
       setGoogleLoading(false)
@@ -388,7 +388,7 @@ export default function SuperadminRegisterPage() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
           25% { transform: translateX(-5px); }

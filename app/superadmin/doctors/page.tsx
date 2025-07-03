@@ -13,26 +13,22 @@ import {
   MapPin,
   Phone,
   Mail,
-  Calendar,
-  Award,
-  Users,
+  // Removed unused imports: Calendar, Award, Users, XCircle, GraduationCap
   Activity,
   TrendingUp,
   Download,
   RefreshCw,
   CheckCircle,
-  XCircle,
   Clock,
   Stethoscope,
-  GraduationCap,
   Building2
 } from 'lucide-react';
 
 export default function DoctorsManagementPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [showAddModal, setShowAddModal] = useState(false);
+  // Removed unused state variables: selectedDoctor, setSelectedDoctor, showAddModal
+  const [, setShowAddModal] = useState(false); // Keep setter for button functionality
 
   // Mock doctors data
   const doctors = [

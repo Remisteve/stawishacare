@@ -16,29 +16,13 @@ import {
   HelpCircle,
   Activity,
   Users,
-  BarChart3,
-  Menu,
-  X,
-  Home,
-  Building2,
-  Heart,
-  UserCheck,
-  Smartphone,
-  GraduationCap,
-  Ban,
-  MapPin,
   Bot,
-  Download,
-  Calendar,
-  UserPlus,
-  Globe,
-  Video,
-  Volume2,
+  Building2,
   ExternalLink
 } from 'lucide-react';
 
 // Enhanced Header Component
-function SuperadminHeader({ onToggleSidebar }: { onToggleSidebar: () => void }) {
+function SuperadminHeader() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
@@ -51,16 +35,9 @@ function SuperadminHeader({ onToggleSidebar }: { onToggleSidebar: () => void }) 
 
   return (
     <header className="bg-white/95 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-      <div className="flex items-center justify-between h-18 px-6 lg:px-8">
+      <div className="flex items-center justify-between h-18 px-6 lg:px-8 w-full">
         {/* Left Side */}
         <div className="flex items-center space-x-4">
-          <button 
-            onClick={onToggleSidebar}
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <Menu className="w-6 h-6 text-gray-600" />
-          </button>
-          
           <div className="flex items-center">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200/50 rotate-3 hover:rotate-0 transition-transform duration-300">
               <Shield className="w-7 h-7 text-white" />
@@ -246,121 +223,13 @@ function SuperadminHeader({ onToggleSidebar }: { onToggleSidebar: () => void }) 
   );
 }
 
-// Enhanced Sidebar Component
-function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const [activeItem, setActiveItem] = useState('dashboard');
-
-  const sidebarItems = [
-    { id: 'dashboard', name: 'Dashboard', icon: Home, href: '/superadmin', badge: null },
-    { id: 'admins', name: 'Admins', icon: UserCheck, href: '/superadmin/admins', badge: '12' },
-    { id: 'doctors', name: 'Doctors', icon: UserCheck, href: '/superadmin/doctors', badge: '48' },
-    { id: 'prep-champions', name: 'PrEP Champions', icon: Heart, href: '/superadmin/prep-champions', badge: '24' },
-    { id: 'patients', name: 'Patients', icon: Users, href: '/superadmin/patients', badge: '1.2K' },
-    { id: 'app-users', name: 'App Users', icon: Smartphone, href: '/superadmin/app-users', badge: '567' },
-    { id: 'appointments', name: 'Appointments', icon: Calendar, href: '/superadmin/appointments', badge: '89' },
-    { id: 'enrollments', name: 'Enrollments', icon: UserPlus, href: '/superadmin/enrollments', badge: '156' },
-    { id: 'facilities', name: 'Facilities', icon: Building2, href: '/superadmin/facilities', badge: '85' },
-    { id: 'joined-online', name: 'Joined Online', icon: Globe, href: '/superadmin/joined-online', badge: '342' },
-    { id: 'test-videos', name: 'HIV Test Videos', icon: Video, href: '/superadmin/test-videos', badge: '78' },
-    { id: 'notifications', name: 'Notifications', icon: Volume2, href: '/superadmin/notifications', badge: '34' },
-    { id: 'locations', name: 'Locations', icon: MapPin, href: '/superadmin/locations', badge: '89' },
-    { id: 'live-downloads', name: 'Live Downloads', icon: Download, href: '/superadmin/live-downloads', badge: 'LIVE' },
-    { id: 'blocked', name: 'Blocked Users', icon: Ban, href: '/superadmin/blocked', badge: '5' },
-    { id: 'reports', name: 'Reports', icon: BarChart3, href: '/superadmin/reports', badge: '45' },
-    { id: 'ai', name: 'AI Assistant', icon: Bot, href: '/superadmin/ai', badge: 'AI' },
-  ];
-
-  return (
-    <>
-      {/* Mobile Overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-          onClick={onClose}
-        />
-      )}
-      
-      {/* Sidebar */}
-      <aside className={`fixed left-0 top-0 h-full w-80 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 lg:translate-x-0 ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      } lg:static lg:z-auto`}>
-        {/* Mobile Header */}
-        <div className="p-6 border-b border-gray-100 lg:hidden">
-          <div className="flex items-center justify-between">
-            <span className="text-xl font-bold text-gray-900">Navigation</span>
-            <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-        
-        {/* Sidebar Content */}
-        <div className="h-full overflow-y-auto">
-          <nav className="p-4 space-y-1">
-            {sidebarItems.map((item) => (
-              <a
-                key={item.id}
-                href={item.href}
-                onClick={() => setActiveItem(item.id)}
-                className={`group flex items-center justify-between px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
-                  activeItem === item.id 
-                    ? 'bg-blue-50 text-blue-600 border border-blue-200 shadow-sm' 
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-              >
-                <div className="flex items-center">
-                  <item.icon className={`w-5 h-5 mr-3 ${
-                    activeItem === item.id ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700'
-                  }`} />
-                  <span>{item.name}</span>
-                </div>
-                {item.badge && (
-                  <span className={`px-2 py-1 text-xs font-bold rounded-lg ${
-                    item.badge === 'LIVE' ? 'bg-red-100 text-red-600 animate-pulse' :
-                    item.badge === 'AI' ? 'bg-green-100 text-green-600' :
-                    activeItem === item.id ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {item.badge}
-                  </span>
-                )}
-              </a>
-            ))}
-          </nav>
-
-          {/* Sidebar Footer */}
-          <div className="p-4 border-t border-gray-100 mt-8">
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">System Status</p>
-                  <p className="text-xs text-gray-600">All systems operational</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between text-xs text-gray-600">
-                <span className="flex items-center">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                  Online
-                </span>
-                <span>99.9% Uptime</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </>
-  );
-}
-
 // Enhanced Footer Component
 function SuperadminFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="border-t border-gray-200 mt-8" style={{backgroundColor: '#1e2a4a'}}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="py-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
             {/* Left Side */}
@@ -416,13 +285,12 @@ function SuperadminFooter() {
   );
 }
 
-// Main Layout Component
+// Main Layout Component - NO SIDEBAR BY DEFAULT
 interface SuperadminLayoutProps {
   children: React.ReactNode;
 }
 
 export default function SuperadminLayout({ children }: SuperadminLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Simulate authentication check
@@ -457,19 +325,14 @@ export default function SuperadminLayout({ children }: SuperadminLayoutProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col">
       {/* Header */}
-      <SuperadminHeader onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <SuperadminHeader />
       
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        
-        {/* Main Content */}
-        <main className="flex-1 min-h-0">
-          <div className="h-full overflow-auto">
-            {children}
-          </div>
-        </main>
-      </div>
+      {/* Main Content - Full Width, No Sidebar */}
+      <main className="flex-1 w-full">
+        <div className="w-full min-h-0">
+          {children}
+        </div>
+      </main>
 
       {/* Footer */}
       <SuperadminFooter />

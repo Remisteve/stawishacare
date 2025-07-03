@@ -31,12 +31,13 @@ export default function Partners() {
         </div>
 
         {/* Partner Spotlight */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <Card className="bg-gradient-to-br from-blue-50/95 via-indigo-50/60 to-blue-100/80 border-2 border-blue-200/80 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-500 overflow-hidden backdrop-blur-sm">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700"></div>
             <CardHeader className="pb-8">
-              <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
-                {/* Logo placeholder */}
+              {/* Images Section */}
+              <div className="flex flex-col lg:flex-row items-center justify-between space-y-6 lg:space-y-0 lg:space-x-8 mb-8">
+                {/* Left Logo - CHAP */}
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-md group-hover:shadow-lg transition-all duration-300 border border-blue-100"></div>
                   <div className="relative bg-gradient-to-br from-white to-blue-50/50 rounded-2xl p-8 border border-blue-200/60 group-hover:border-blue-300/80 transition-all duration-300 h-32 w-64 flex items-center justify-center overflow-hidden backdrop-blur-sm">
@@ -48,15 +49,28 @@ export default function Partners() {
                   </div>
                 </div>
                 
-                {/* Partner info */}
-                <div className="flex-1 text-center md:text-left">
+                {/* Center Partner Info */}
+                <div className="flex-1 text-center px-4">
                   <CardTitle className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-800 to-indigo-700 bg-clip-text text-transparent mb-3">
                     CHAP Stawisha Project
                   </CardTitle>
                   <p className="text-lg font-semibold text-blue-600 mb-4 bg-gradient-to-r from-blue-100 to-indigo-100 px-4 py-2 rounded-full inline-block border border-blue-200">Christian Health Association of Kenya (CHAK)</p>
-                  <p className="text-blue-700 text-lg leading-relaxed">
+                  <p className="text-blue-700 text-lg leading-relaxed max-w-2xl mx-auto">
                     A CDC-funded project supporting HIV/TB/OVC services in faith-based and county health facilities across 15 counties in Kenya
                   </p>
+                </div>
+
+                {/* Right Logo - Partner/CDC */}
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-md group-hover:shadow-lg transition-all duration-300 border border-indigo-100"></div>
+                  <div className="relative bg-white rounded-2xl p-8 border border-indigo-200/60 group-hover:border-indigo-300/80 transition-all duration-300 h-32 w-64 flex items-center justify-center overflow-hidden backdrop-blur-sm">
+                    <img 
+                        src="https://raw.githubusercontent.com/Remisteve/prep-software/main/public/chak.png" 
+                        alt="CHAK"
+                        className="max-w-full max-h-16 object-contain filter group-hover:scale-105 transition-all duration-300"
+                      />
+
+                  </div>
                 </div>
               </div>
             </CardHeader>
@@ -64,7 +78,7 @@ export default function Partners() {
             <CardContent>
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 {/* About CHAK */}
-                <div className="bg-gradient-to-br from-blue-50/80 to-white p-6 rounded-2xl border border-blue-200/60 shadow-sm">
+                <div className="bg-gradient-to-br from-blue-50/80 to-white p-6 rounded-2xl border border-blue-200/60 shadow-sm hover:shadow-md transition-shadow duration-300">
                   <h4 className="text-xl font-bold text-blue-800 mb-4 flex items-center">
                     <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl mr-3 shadow-md">
                       <Award className="h-5 w-5 text-white" />
@@ -89,7 +103,7 @@ export default function Partners() {
                 </div>
 
                 {/* Project Impact */}
-                <div className="bg-gradient-to-br from-indigo-50/80 to-blue-50/60 p-6 rounded-2xl border border-blue-200/60 shadow-sm">
+                <div className="bg-gradient-to-br from-indigo-50/80 to-blue-50/60 p-6 rounded-2xl border border-blue-200/60 shadow-sm hover:shadow-md transition-shadow duration-300">
                   <h4 className="text-xl font-bold text-blue-800 mb-4 flex items-center">
                     <div className="p-2 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-xl mr-3 shadow-md">
                       <Target className="h-5 w-5 text-white" />
@@ -115,7 +129,7 @@ export default function Partners() {
               </div>
 
               {/* Innovation Highlight */}
-              <div className="bg-gradient-to-r from-blue-100/90 via-indigo-100/70 to-blue-100/90 rounded-2xl p-8 border border-blue-300/60 shadow-lg backdrop-blur-sm">
+              <div className="bg-gradient-to-r from-blue-100/90 via-indigo-100/70 to-blue-100/90 rounded-2xl p-8 border border-blue-300/60 shadow-lg backdrop-blur-sm hover:shadow-xl transition-shadow duration-300">
                 <h4 className="text-xl font-bold text-blue-800 mb-4 flex items-center">
                   <div className="p-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 rounded-xl mr-3 shadow-md">
                     <Sparkles className="h-5 w-5 text-white" />
@@ -142,7 +156,7 @@ export default function Partners() {
                 Partnership Impact
               </h3>
               <p className="text-xl md:text-2xl opacity-95 max-w-3xl mx-auto mb-10 text-blue-100">
-                Together with CHAP Stawisha, we're expanding HIV prevention services nationwide
+                CHAK CHAP Stawisha is expanding HIV prevention services to all Men and Young People Nationwide
               </p>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">

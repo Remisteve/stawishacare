@@ -13,19 +13,17 @@ import {
   MapPin,
   Phone,
   Mail,
-  Calendar,
-  Users,
-  Activity,
+  // Removed unused imports: Calendar, Users, Activity, XCircle
   TrendingUp,
   Download,
   RefreshCw,
   CheckCircle,
-  XCircle,
   Clock,
   UserCheck,
   Building2,
   Key,
-  Lock
+  Lock,
+  BarChart3 // Added for Data Admin role icon
 } from 'lucide-react';
 
 export default function AdminManagementPage() {
@@ -144,7 +142,7 @@ export default function AdminManagementPage() {
     }
   ];
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-700 border border-green-200';
       case 'pending': return 'bg-orange-100 text-orange-700 border border-orange-200';
@@ -153,7 +151,7 @@ export default function AdminManagementPage() {
     }
   };
 
-  const getAccessLevelColor = (level) => {
+  const getAccessLevelColor = (level: string) => {
     switch (level) {
       case 'high': return 'bg-red-100 text-red-700';
       case 'medium': return 'bg-yellow-100 text-yellow-700';
@@ -162,7 +160,7 @@ export default function AdminManagementPage() {
     }
   };
 
-  const getRoleIcon = (role) => {
+  const getRoleIcon = (role: string) => {
     switch (role) {
       case 'Regional Admin': return Shield;
       case 'Facility Admin': return Building2;
