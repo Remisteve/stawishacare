@@ -1,15 +1,6 @@
-echo "[build]
-  command = \"npm run build\"
-  publish = \".next\"
-
-[build.environment]
-  NODE_VERSION = \"18\"
-
-[[plugins]]
-  package = \"@netlify/plugin-nextjs\"
-
-[context.production]
-  command = \"npm run build\"
-
-[context.deploy-preview]
-  command = \"npm run build\"" > netlify.toml
+echo [build] > netlify.toml
+echo command = "npm run build" >> netlify.toml
+echo publish = ".next" >> netlify.toml
+echo. >> netlify.toml
+echo [[plugins]] >> netlify.toml
+echo package = "@netlify/plugin-nextjs" >> netlify.toml
