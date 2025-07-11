@@ -45,7 +45,7 @@ export default function Header() {
   return (
     <>
       {/* Professional Emergency Contact Bar */}
-      <div className="bg-red-600 text-white py-3 px-4">
+      <div className="bg-teal-800 text-white py-3 px-4">
 
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center space-x-6 text-sm">
@@ -74,8 +74,8 @@ export default function Header() {
             {/* Professional Logo */}
             <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => smoothScroll('#home')}>
               <div className="relative">
-                <div className="bg-blue-600 p-3 rounded-lg shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
-                  <Shield className="h-8 w-8 text-white" />
+                <div className=" rounded-lg transition-all h-12 w-12">
+                  <img src="https://raw.githubusercontent.com/Remisteve/prep-software/main/public/chak.png" alt="Chak" />
                 </div>
               </div>
               <div>

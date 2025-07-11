@@ -124,7 +124,6 @@ export default function Dashboard(): JSX.Element {
       <div className="space-y-4">
         <div className="text-center">
           <h2 className="text-lg font-bold text-slate-900 mb-1">{titles[selectedFilter] || 'Analytics'}</h2>
-          <p className="text-sm text-slate-600">Comprehensive analytics and insights</p>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">

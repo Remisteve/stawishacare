@@ -275,7 +275,7 @@ export default function Footer() {
         </div>
 
         {/* Emergency Banner */}
-        <div className="bg-red-600">
+        <div className="bg-teal-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-center space-x-4 text-white">
               <Phone className="h-5 w-5 text-red-200" />
