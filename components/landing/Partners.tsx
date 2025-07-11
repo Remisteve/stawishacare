@@ -42,7 +42,8 @@ export default function Partners() {
                   <div className="absolute inset-0 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-md group-hover:shadow-lg transition-all duration-300 border border-blue-100"></div>
                   <div className="relative bg-gradient-to-br from-white to-blue-50/50 rounded-2xl p-8 border border-blue-200/60 group-hover:border-blue-300/80 transition-all duration-300 h-32 w-64 flex items-center justify-center overflow-hidden backdrop-blur-sm">
                     <img 
-                      src="https://raw.githubusercontent.com/Remisteve/prep-software/refs/heads/main/public/chap.png" 
+                      src="https://raw.githubusercontent.com/Remisteve/prep-software/main/public/chak.png" 
+                      
                       alt="CHAP Stawisha Logo"
                       className="max-w-full max-h-16 object-contain filter group-hover:scale-105 transition-all duration-300"
                     />
@@ -65,7 +66,7 @@ export default function Partners() {
                   <div className="absolute inset-0 bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-md group-hover:shadow-lg transition-all duration-300 border border-indigo-100"></div>
                   <div className="relative bg-white rounded-2xl p-8 border border-indigo-200/60 group-hover:border-indigo-300/80 transition-all duration-300 h-32 w-64 flex items-center justify-center overflow-hidden backdrop-blur-sm">
                     <img 
-                        src="https://raw.githubusercontent.com/Remisteve/prep-software/main/public/chak.png" 
+                        src="https://raw.githubusercontent.com/Remisteve/prep-software/refs/heads/main/public/chap.png" 
                         alt="CHAK"
                         className="max-w-full max-h-16 object-contain filter group-hover:scale-105 transition-all duration-300"
                       />

@@ -273,19 +273,6 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
-        {/* Emergency Banner */}
-        <div className="bg-teal-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-center space-x-4 text-white">
-              <Phone className="h-5 w-5 text-red-200" />
-              <span className="text-base font-bold">
-                Emergency Support: Call <strong>1195</strong> for immediate assistance
-              </span>
-              <Activity className="h-5 w-5 text-red-200" />
-            </div>
-          </div>
-        </div>
       </div>
     </footer>
   )
